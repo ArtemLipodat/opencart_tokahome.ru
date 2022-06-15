@@ -1,0 +1,31 @@
+{{ header }}
+<div id="checkout-checkout" class="container">
+  {% if heading_title_light_empty %}
+  <noindex><div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ heading_title_light_empty }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div></noindex>
+  {% endif %}
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <noindex><span class="panel-title">{{ error_title_light_empty }}</span><br /><br /></noindex>
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <noindex><span>{{ help_title_light_empty }}</span><br /></noindex>
+          </div>
+          <div class="panel-collapse collapse" id="collapse-checkout-option">
+            <div class="panel-body"></div>
+          </div>
+        </div>
+      </div>
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+</div>
+{{ footer }}

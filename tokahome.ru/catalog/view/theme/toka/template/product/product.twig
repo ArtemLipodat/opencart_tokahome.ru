@@ -1,0 +1,128 @@
+{{ header }}
+<div class="product-cart" style="min-height: 100vh; margin-top: 35px">
+    <div class="product-cart-header">
+        <h2 style="width: 60%">{{heading_title}}</h2>
+        <a href="{{breadcrumbs[1].href}}">Назад</a>
+    </div>
+    <div class="product-cart-info">
+        <div class="product-cart-info-photo">
+            <ul class="thumbnails">
+                <li><a class="thumbnail" href="{{ popup }}"><img class="images" src="{{ thumb }}" alt=""></a></li>
+                {% for image in images %}
+                <li class="image-additional"><a class="thumbnail" href="{{ image.popup }}"><img src="{{ image.thumb }}" alt=""></a></li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="product-cart-info-text">
+            <span class="price">Цена:</span>
+            <div class="cart-price">
+                {% if discounts[0].price %}
+                <span>{{ discounts[0].price }}</span>
+                {% endif %}
+                <span>{{price}}</span>
+            </div>
+            <a type="button" id="button-cart" data-loading-text="Загрузка...">Купить</a>
+            {% if stock == 'Есть в наличии' %}
+            <span class="instock">В наличии</span>
+            {% endif %}
+            <p>ГАРАНТИЯ НА ОБОРУДОВАНИЕ 7 лет</p>
+            {% if catId == 59 %}
+            <a  class="online_video" style="text-decoration: none; width: 370px" href="#onlineVideo" rel="modal:open">Видеонаблюдение онлайн</a>
+            {% endif %}
+        </div>
+        <div class="modal" id="onlineVideo">
+            <iframe id="iframe" src="https://rtsp.me/embed/zYbSibYN/" width="870px" height="600px"></iframe>
+        </div>
+    </div>
+    <div class="product-cart-desc">
+        <h2>Описание</h2>
+        {{ description }}
+    </div>
+</div>
+{{ footer }}
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.thumbnails').magnificPopup({
+            type:'image',
+            delegate: 'a',
+            gallery: {
+                enabled: true
+            },
+            image: {
+                verticalFit: true,
+            }
+        });
+    });
+
+
+    $('#button-cart').on('click', function() {
+        $.ajax({
+            url: 'index.php?route=checkout/cart/add',
+            type: 'post',
+            data: {quantity:1, product_id:{{ product_id }} },
+            dataType: 'json',
+            beforeSend: function() {
+                $('#button-cart').text('Загрузка');
+            },
+            complete: function(json) {
+                $('#button-cart').replaceWith('<a type="button" id="button-cart" href="https://tokahome.ru/index.php?route=checkout/cart">В Корзину</a>');
+                $('#button-cart').css('background-color', '#acacad');
+                $('.instock').before('<div class="product">Товар добавлен в корзину</div>')
+                $.ajax({
+                    url: 'index.php?route=common/cart/info',
+                    type: 'post',
+                    dataType: 'json',
+                    complete: function (json){
+                        // $('#shoppingBag').children('a').replaceWith(json.responseText);
+                        $('#shoppingBag').html(json.responseText);
+                        $('#mobile-replace').html(json.responseText);
+                        // $('#shoppingBag').text(json.responseText)
+                    }
+                })
+            },
+            // success: function(json) {
+            //     $('.alert-dismissible, .text-danger').remove();
+            //     $('.form-group').removeClass('has-error');
+            //
+            //     if (json['error']) {
+            //         if (json['error']['option']) {
+            //             for (i in json['error']['option']) {
+            //                 var element = $('#input-option' + i.replace('_', '-'));
+            //
+            //                 if (element.parent().hasClass('input-group')) {
+            //                     element.parent().after('<div class="text-danger">' + json['error']['option'][i] + '</div>');
+            //                 } else {
+            //                     element.after('<div class="text-danger">' + json['error']['option'][i] + '</div>');
+            //                 }
+            //             }
+            //         }
+            //
+            //         if (json['error']['recurring']) {
+            //             $('select[name=\'recurring_id\']').after('<div class="text-danger">' + json['error']['recurring'] + '</div>');
+            //         }
+            //
+            //         // Highlight any found errors
+            //         $('.text-danger').parent().addClass('has-error');
+            //     }
+            //
+            //     if (json['success']) {
+            //         $('.breadcrumb').after('<div class="alert alert-success alert-dismissible">' + json['success'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            //
+            //         $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+            //
+            //         $('html, body').animate({ scrollTop: 0 }, 'slow');
+            //
+            //         $('#cart > ul').load('index.php?route=common/cart/info ul li');
+            //     }
+            // },
+            // error: function(xhr, ajaxOptions, thrownError) {
+            //     alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            // }
+        });
+    });
+</script>
+
+
+

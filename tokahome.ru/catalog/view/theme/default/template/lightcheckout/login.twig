@@ -1,0 +1,42 @@
+  {% if fields.register.show or fields.guest.show or fields.alogged.show %}
+  <div class="tab-pane active" id="tab-register">
+	<div{% if fields.register.show and fields.guest.show %}{% else %} class="light-hide"{% endif %}>
+	  <div class="radio">
+	  <label> {% if account == 'register' %}
+		<input type="radio" name="account" value="register" checked="checked" />
+		{% else %}
+		<input type="radio" name="account" value="register" />
+		{% endif %}
+		{% if fields.register.name[language_id] %}{{ fields.register.name[language_id] }}{% else %}{{ text_register }}{% endif %}</label>
+	  </div>
+	  {% if checkout_guest %}
+	  <div class="radio">
+	    <label> {% if account == 'guest' or not fields.register.show %}
+		<input type="radio" name="account" value="guest" checked="checked" />
+		{% else %}
+		<input type="radio" name="account" value="guest" />
+		{% endif %}
+		{% if fields.guest.name[language_id] %}{{ fields.guest.name[language_id] }}{% else %}{{ text_guest }}{% endif %}</label>
+	  </div>
+	  {% endif %}
+	  <p>{{ text_register_account }}</p>
+	</div>	
+	<div class="panel-collapse" id="collapse-payment-address">
+		<div class="panel-body"></div>
+	</div>
+  </div>
+  {% endif %}
+  {% if fields.alogged.show %}
+  <div class="tab-pane{% if not fields.register.show and not fields.guest.show %} active{% endif %}" id="tab-login">
+	<p>{{ text_i_am_returning_customer }}</p>
+	<div class="form-group">
+	  <label class="control-label" for="input-email">{{ entry_email }}</label>
+	  <input type="text" name="email" value="" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+	</div>
+	<div class="form-group">
+	  <label class="control-label" for="input-password">{{ entry_password }}</label>
+	  <input type="password" name="password" value="" placeholder="{{ entry_password }}" id="input-password" class="form-control" />
+	  <a href="{{ forgotten }}">{{ text_forgotten }}</a></div>
+	<input type="button" value="{{ button_login }}" id="button-login" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+  </div>
+  {% endif %}

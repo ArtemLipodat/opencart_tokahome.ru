@@ -1,0 +1,37 @@
+{% if error_warning %}
+<div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+{% endif %}
+{% if shipping_methods %}
+<p class="payment_method">{{ text_shipping_method }}</p>
+{% for key,shipping_method in shipping_methods %}
+<p><strong>{{ shipping_method.title }}</strong></p>
+{% if not shipping_method.error %}
+{% for quote in shipping_method.quote %}
+<div class="radio">
+  <label> {% if quote.code == code or not code %}
+    {% set code = quote.code %}
+    <input type="radio" name="shipping_method" value="{{ quote.code }}" checked="checked" />
+    {% else %}
+    <input type="radio" name="shipping_method" value="{{ quote.code }}" />
+    {% endif %}
+	{% if fields[key].name[language_id] %}
+		{{ fields[key].name[language_id] }}
+	{% else %}
+		{{ quote.title }}
+	{% endif %}
+     - {{ quote.text }}</label>
+</div>
+{% endfor %}
+{% else %}
+<div class="alert alert-danger alert-dismissible">{{ shipping_method.error }}</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if fields.shipping_comment.show %}
+<div{% if fields.shipping_comment.required %} class="required"{% endif %}>
+	<label class="control-label"><strong>{% if fields.shipping_comment.name[language_id] %}{{ fields.shipping_comment.name[language_id] }}{% else %}{{ text_comments }}{% endif %}</strong></label>
+	<p>
+	  <textarea name="comment" rows="3" class="form-control" id="shipping-method">{{ comment }}</textarea>
+	</p>
+</div>
+{% endif %}

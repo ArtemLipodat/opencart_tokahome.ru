@@ -1,0 +1,1310 @@
+{{ header }}
+
+<style>
+	.panel-title{
+		font-weight: 500;
+		font-size: 24px;
+		color: #030303;
+	}
+</style>
+<div id="checkout-checkout" class="container {{ theme }}">
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+
+	  <style>
+		  .checkout_title{
+			  font-weight: 500;
+			  font-size: 36px;
+			  color: #030303;
+			  margin-bottom: 20px;
+			  margin-top: 50px;
+		  }
+	  </style>
+    <div id="content" class="{{ class }}">{{ content_top }}
+{#	  {{ cart }}#}
+      <h1 class="checkout_title" >{{ heading_title_light }}</h1>
+	  <div class="row">		  
+		  <div class="panel-group" id="accordion">
+		    <div class="col-sm-12">{{ htmls.top[language_id] }}</div>
+			<div class="col-sm-12"><div id="mobile-cart"></div></div>
+			<div class="col-lg-{{ columns.1 }} col-md-{{ columns.1 }} col-sm-6" id="light-left">
+			  {% if status.alogin and (fields.register.show or fields.guest.show or fields.alogged.show) %}
+				<div id="register-guest">
+				  <div class="panel panel-default">
+					<ul class="nav nav-tabs panel-heading{% if not logged %} padding-bottom-0{% endif %} margin-bottom-0" id="light-tab">
+						{% if fields.register.show or fields.guest.show %}
+						  <li class="active {% if not logged %}light-not-logged{% else %}light-logged{% endif %}">
+						    <a href="#tab-register" data-toggle="tab">{% if fields.register.show %}{% if fields.register.name[language_id] %}{{ fields.register.name[language_id] }}{% else %}{{ text_register }}{% endif %}{% elseif fields.guest.show %}{{ text_checkout_guest }}{% endif %}</a>
+						  </li>
+						{% endif %}
+						{% if fields.alogged.show %}
+						  <li class="{% if not logged %}light-not-logged{% else %}light-logged{% endif %}{% if not fields.register.show and not fields.guest.show %} active{% endif %}">
+						    <a href="#tab-login" data-toggle="tab">{% if fields.alogged.name[language_id] %}{{ fields.alogged.name[language_id] }}{% else %}{{ text_login_light_checkout }}{% endif %}</a>
+						  </li>
+						{% endif %}
+						<li class="{% if logged %}light-not-logged{% else %}light-logged{% endif %}"><span class="light-float-left margin-right-15">{{ text_enter_login }}</span><span onClick="location = '{{ href_account }}'" class="light-float-left btn-link">{{ log_firstname }} {{ log_lastname }}</span></li>
+						<li class="{% if logged %}light-not-logged{% else %}light-logged{% endif %} pull-right btn-link" onClick="location = '{{ hrer_logout }}'"><span>{{ text_login_exit }}</span></li>
+					</ul><div class="clearfix"></div>
+					<div class="panel-collapse tab-content panel-body" style="{% if not logged %}display: block{% else %}display: none;{% endif %}" id="collapse-checkout-option"></div>
+				  </div>
+				</div>
+			  {% endif %}
+			</div>
+			<div class="col-lg-{{ columns.2 }} col-md-{{ columns.2 }} col-sm-6" id="light-right">
+			  <div class="row">
+				<div class="col-lg-{{ columns.3 }} col-md-{{ columns.3 }}"><div id="light-right-1"></div></div>
+				<div class="col-lg-{{ columns.4 }} col-md-{{ columns.4 }}"><div id="light-right-2"></div></div>
+				<div class="col-lg-12"><div id="light-right-3"></div></div>
+			  </div>
+			</div>
+			<div id="mobile-light"></div>
+			{% if not logged %}
+			<div class="col-lg-6">
+			  {% if status.payment_address %}
+				<div id="payment-address">
+					<div class="panel panel-default">
+					  <div class="panel-heading">
+						<h4 class="panel-title">Контактное лицо</h4>
+					  </div>
+					  <div class="panel-collapse" id="collapse-payment-separator-address">
+						<div class="panel-body"></div>
+					  </div>
+					</div>
+				</div>
+			  {% endif %}
+			</div>
+			{% endif %}
+			{% if shipping_required %}
+			<div class="{% if not logged %}col-lg-6{% else %}col-sm-6{% endif %}">
+			  {% if status.shipping %}
+				<div id="shipping-address">
+					<div class="panel panel-default">
+					  <div class="panel-heading">
+						<h4 class="panel-title">{{ text_checkout_shipping_address }}</h4>
+					  </div>
+					  <div class="panel-collapse" id="collapse-shipping-address">
+						<div class="panel-body"></div>
+					  </div>
+					</div>
+				</div>
+			  {% endif %}
+			</div>
+			<div class="{% if not logged %}col-lg-6{% else %}col-sm-6{% endif %}">
+				{% if status.shipping_method and shipping_required %}
+					<div id="shipping_method"{% if not shipping_required %} style="display: none;"{% endif %}>
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h4 class="panel-title">{% if fields_shipping_methods.shipping_method.name[language_id] %}{{ fields_shipping_methods.shipping_method.name[language_id] }}{% else %}{{ text_checkout_shipping_method }}{% endif %}</h4>
+						  </div>
+						  <div class="panel-collapse" id="collapse-shipping-method">
+							<div class="panel-body"></div>
+						  </div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+			{% endif %}
+			<div class="{% if not logged %}col-lg-6{% else %}col-sm-6{% endif %}">
+				{% if status.payment_method %}
+					<div id="payment-method">
+						<div class="panel panel-default">
+						  <div class="panel-heading">
+							<h4 class="panel-title">{% if fields_payment_methods.payment_method.name[language_id] %}{{ fields_payment_methods.payment_method.name[language_id] }}{% else %}{{ text_checkout_payment_method }}{% endif %}</h4>
+						  </div>
+						  <div class="panel-collapse" id="collapse-payment-method">
+							<div class="panel-body"></div>
+						  </div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+			<div class="{% if not logged %}col-lg-6{% else %}col-sm-6{% endif %}">
+				<div id="checkout-confirm">
+					<div class="panel-default">
+					  <div class="panel-collapse in" id="collapse-checkout-confirm">
+						<div class="row"><div class="panel-body"></div></div>
+					  </div>
+					</div>
+				</div>
+			</div>
+			<div class="clearfix"></div>
+			<div class="col-sm-12">{{ htmls.bottom[language_id] }}</div>
+		  </div>
+	  </div>	  
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+</div>
+<script type="text/javascript"><!--
+{% if fields.guest.show and status.payment_address %}
+	{% if not fields.register.show and not fields.alogged.show %}
+		<!--$('#register-guest').remove();-->
+	{% endif %}
+{% endif %}
+{% if results %}
+  var register_guest = $('#register-guest');
+  var payment_address = $('#payment-address');
+  var shipping = $('#shipping-address');
+  var shipping_method = $('#shipping_method');
+  var payment_method = $('#payment-method');
+  var cart = $('#light-cart');
+  var confirm = $('#checkout-confirm');
+  {% for group_id,result in results %}
+	{% if group_id == 1 %}var light_container = '#light-left';{% endif %}
+	{% if group_id == 2 %}var light_container = '#light-right-1';{% endif %}
+	{% if group_id == 3 %}var light_container = '#light-right-2';{% endif %}
+	{% if group_id == 4 %}var light_container = '#light-right-3';{% endif %}
+	{% for res in result %}
+	  {% if res.name == 'alogin' %}$(light_container).append(register_guest);{% endif %}
+	  {% if res.name == 'payment_address' %}$(light_container).append(payment_address);{% endif %}
+	  {% if res.name == 'shipping' %}$(light_container).append(shipping);{% endif %}
+	  {% if res.name == 'shipping_method' %}$(light_container).append(shipping_method);{% endif %}
+	  {% if res.name == 'payment_method' %}$(light_container).append(payment_method);{% endif %}
+	  {% if res.name == 'cart' %}$(light_container).append(cart);{% endif %}
+	  {% if res.name == 'confirm' %}$(light_container).append(confirm);{% endif %}
+	{% endfor %}
+  {% endfor %}
+{% endif %}
+
+function DistributionWidth() {
+	if (!$('#light-right-1').html()) {
+		$('#light-right-2').parent().attr('class', 'col-lg-12');
+	}
+	if (!$('#light-right-2').html()) {
+		$('#light-right-1').parent().attr('class', 'col-lg-12');
+	}
+	if (!$('#light-left').children().html()) {
+		$('#light-left').hide();
+		$('#light-right').removeAttr('class').addClass('col-lg-12 col-md-12 col-sm-12 col-xs-12');
+	}
+}
+DistributionWidth();
+if ($(window).width() < 992) {
+	$('#mobile-light, #mobile-cart').empty();
+	$('#mobile-light').prepend($('#shipping_method'));
+	$('#mobile-light').prepend($('#payment-method'));
+	$('#mobile-light').append($('#checkout-confirm'));
+	$('#mobile-light #shipping_method, #mobile-light #payment-method').wrap('<div class="col-sm-6 col-xs-12"></div>');
+	$('#mobile-cart').append($('#light-cart'));
+	$('#mobile-light #checkout-confirm').wrap('<div class="col-sm-12 col-xs-12"></div>');
+	$('.light-colspan').attr('colspan', '3');
+	
+}
+function mobile_light_cart() {
+	if ($(window).width() < 768) {
+		$('.light-qty').each(function(){
+			$(this).after($(this).find('.btn-danger'));
+			$(this).parent().find('.btn-danger').removeClass('btn btn-danger').addClass('btn-link redcolor');
+			$(this).parent().find('.btn-danger').remove();
+		});
+	}
+}
+mobile_light_cart();
+// Cart Update
+function LightCartUpdate() {
+	$('#checkout-cart + .alert-summa').remove();
+
+    $.ajax({
+        url: 'index.php?route=lightcheckout/cart/edit',
+        type: 'post',
+        data: $('#light-cart input[name^=\'quantity\']'),
+        dataType: 'json',
+        beforeSend: function() {
+			$('#light-cart').addClass('lightloadingTop');
+		},
+		complete: function(json) {
+			$.ajax({
+				url: 'index.php?route=lightcheckout/cart&updatecart=1',
+				dataType: 'html',
+				beforeSend: function() {
+					
+				},
+				complete: function() {
+					$('#light-cart').removeClass('lightloadingTop');
+					LightCheckoutConfirm();
+					mobile_light_cart();
+				},
+				success: function(html) {
+
+					$('#light-cart').empty();
+					
+					$('#light-cart').html(html);
+
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+				}
+			});
+			
+		},
+        success: function(json) {
+			if (json['total']) {
+				$.each(["#cart-total", "#cart_total", "#menu_wrap #cart-total", "#cart_menu .s_grand_total", "#cart .tb_items", "#cart .tb_total", "button#cart.fm-menu-cart-box.d-flex.align-items-center", "button.us-cart-img"], function(index, id) {
+					$(id).html(json['total']);
+				});
+				{% if htmls_js %}
+					{{ htmls_js }}
+					/*$('#cart > ul').load('index.php?route=common/cart/info ul li');*/
+				{% endif %}
+				if (json['theme']){
+					LightcheckoutThemes(json['theme'], json['total']);
+				}
+			}
+            if (json['location']){
+				location = 'index.php?route=checkout/cart';
+			}
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+function LightCartRemove(key) {
+    $.ajax({
+		url: 'index.php?route=checkout/cart/remove',
+		type: 'post',
+		data: 'key=' + key,
+		dataType: 'json',
+		beforeSend: function() {
+			$('#cart > button').button('loading');
+		},
+		complete: function() {
+			$('#cart > button').button('reset');
+		},
+		success: function(json) {
+			LightCartUpdate();
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+$(document).on('change', 'input[name=\'account\']', function() {
+	if ($('#collapse-payment-address').parent().find('.panel-heading .panel-title > *').is('a')) {
+		if (this.value == 'register') {
+			$('#collapse-payment-address').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_account }}</a>');
+		} else {
+			$('#collapse-payment-address').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_payment_address }}</a>');
+		}
+	} else {
+		if (this.value == 'register') {
+			$('#collapse-payment-address').parent().find('.panel-heading .panel-title').html('{{ text_checkout_account }}');
+		} else {
+			$('#collapse-payment-address').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_address }}');
+		}
+	}
+});
+$(document).on('change', 'input[name=\'shipping_method\']', function() {
+	LightShippingMethodSave('updatecart');	
+});
+$(document).on('change', 'input[name=\'payment_method\']', function() {
+	LightPaymentMethodSave('updatecart');	
+});
+
+{% if logged and status.payment_address %}
+$(document).ready(function() {
+    $.ajax({
+        url: 'index.php?route=lightcheckout/payment_address',
+        dataType: 'html',
+        success: function(html) {
+            $('#collapse-payment-separator-address .panel-body').html(html);
+
+			$('#collapse-payment-address').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_payment_address }} <i class="fa fa-caret-down"></i></a>');
+
+			$('a[href=\'#collapse-payment-address\']').trigger('click');
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+});
+{% endif %}
+
+// Checkout
+function LightCheckout(name) {
+    $.ajax({
+        url: 'index.php?route=lightcheckout/' + name,
+        dataType: 'html',
+        beforeSend: function() {
+        	$('#register-guest').addClass('lightloadingTop');
+		},
+        complete: function() {
+			$('#register-guest').removeClass('lightloadingTop');
+			LightAddBlock('login');
+			
+			/*if (Payment_Overlap_Shiping()) {
+				$('#shipping-address').hide();
+				{% if shipping_required %}
+					LightMethodShipping();
+				{% else %}
+					LightMethodPayment();
+				{% endif %}
+			} else {
+				LightAddressShipping();
+			}*/
+        },
+        success: function(html) {
+            $('.alert-dismissible, .text-danger').remove();
+			$('.form-group').removeClass('has-error');
+
+            $('#collapse-payment-address .panel-body').html(html);
+			
+			{% if status.payment_address %}
+				$('#collapse-payment-separator-address .panel-body').html(html);
+				$('#collapse-payment-address #guest-account').remove();
+				/*
+				if ($('#collapse-payment-address > .panel-body > div').html() == undefined){
+					$('a[href="#tab-register"]').parent().remove();
+					$('#tab-register').remove();
+					$('#light-tab li:first a').tab('show');
+				}
+				*/				
+			{% endif %}
+
+			$('#collapse-payment-separator-address #register-account, #collapse-payment-separator-address #checkbox-confirm, #collapse-payment-address #register-fields').remove();
+			if (name == 'register') {
+				$('#tab-register > div > p').show();
+			}
+			if (name == 'guest') {
+				$('.light-guest-help').remove();
+				$('#tab-register > div > p').hide();
+				if ($('#collapse-payment-address > .panel-body > div').html() == undefined){
+					$('#collapse-payment-address > .panel-body').prepend('<span class="light-guest-help"">{{ text_empty_guest }}</span>');
+				}				
+				DistributionWidth();
+			}
+			
+			/*{% if status.payment_address %}
+				$('#collapse-payment-address #guest-account').remove();
+			{% endif %}*/
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+
+{% if status.alogin %}
+	$(document).ready(function() {
+		$.ajax({
+			url: 'index.php?route=lightcheckout/login',
+			dataType: 'html',
+			complete: function(html) {
+			    {% if status.alogin %}
+					{% if fields.register.show %}
+						LightCheckout('register');
+					{% elseif fields.guest.show %}
+						LightCheckout('guest');
+					{% else %}
+						LightAddBlock();
+					{% endif %}
+				{% endif %}				
+			},
+			success: function(html) {
+			   $('#collapse-checkout-option').html(html);
+
+				$('#collapse-checkout-option').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_option }} <i class="fa fa-caret-down"></i></a>');
+
+				$('a[href=\'#collapse-checkout-option\']').trigger('click');
+
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+			}
+		});
+	});
+{% endif %}
+
+// Status Block
+{% if status.alogin %}
+	$('#accordion').addClass('lightloading');
+{% else %}
+	LightAddBlock();
+{% endif %}
+function LightAddBlock(check){
+	// if Status 
+		{% if status.payment_address %}
+			if (check == 'login') {
+				{% if status.payment_method %}LightMethodPayment();{% endif %}
+			} else {
+				LightPaymentAddress();
+			}
+		{% endif %}
+		{% if status.shipping and shipping_required %}
+			if (Payment_Overlap_Shiping()) {
+				$('#shipping-address').hide();
+				LightMethodShipping();
+			} else {
+				LightAddressShipping();
+			}		
+		{% endif %}
+	// ELSE Status 
+		{% if not status.payment_address %}
+			{% if status.payment_method %}
+				LightMethodPayment();
+			{% endif %}
+		{% endif %}
+		{% if not status.shipping %}
+			{% if status.shipping_method and shipping_required %}
+				LightMethodShipping();
+			{% endif %}
+		{% endif %}
+	// END Status
+	if (check == 'login') {
+		{% if (not status.shipping or not shipping_required) and not status.payment_method and not status.shipping_method %}
+			LightCheckoutConfirm();
+		{% endif %}
+	}
+}
+$(document).delegate('input[name=\'account\']', 'change', function(){
+	LightCheckout($(this).val());
+});
+$(document).delegate('select[name=\'shipping_zone_id\']', 'change', function(){
+	LightMethodShipping($(this).val(), $('#collapse-shipping-address select[name=\'shipping_country_id\']').val());
+	if ($('select[name=\'light_zone_id\']').html() == undefined) {
+		LightMethodPayment($(this).val(), $('#collapse-shipping-address select[name=\'shipping_country_id\']').val());
+	}
+});
+$(document).delegate('select[name=\'light_zone_id\']', 'change', function(){
+	LightMethodPayment($(this).val(), $('#collapse-payment-separator-address select[name=\'light_country_id\']').val());
+	if ($('select[name=\'shipping_zone_id\']').html() == undefined) {
+		LightMethodShipping($(this).val(), $('#collapse-payment-separator-address select[name=\'light_country_id\']').val());
+	}
+});
+function Payment_Overlap_Shiping(){
+	var shipping_address_option = $('input[name=\'shipping_address\']:checked').prop('value');
+	if (shipping_address_option  == 1) {
+		localStorage.setItem('shipping_address', false);
+		return shipping_address_option;
+	} else {
+		localStorage.setItem('shipping_address', '');
+	}
+	
+	var shipping_address_option_shipping = $('input[name=\'shipping_address_shipping\']:checked').prop('value');
+	if (shipping_address_option_shipping  == 1) {
+		localStorage.setItem('shipping_address', false);
+		return shipping_address_option_shipping;
+	}
+}
+{% if shipping_required %}
+$(document).delegate('#collapse-payment-address input[name=\'shipping_address\']', 'change', function(){
+    if (Payment_Overlap_Shiping()) {
+		$('#shipping-address').hide();
+		localStorage.setItem('shipping_address', false);
+		LightMethodShipping($('#collapse-payment-separator-address select[name=\'light_zone_id\']').val(), $('#collapse-payment-separator-address select[name=\'light_country_id\']').val());
+	} else {
+		localStorage.setItem('shipping_address', '');
+		LightAddressShipping();
+	}
+});
+$(document).delegate('#collapse-payment-separator-address input[name=\'shipping_address\']', 'change', function(){
+    if (Payment_Overlap_Shiping()) {
+		$('#shipping-address').hide();
+		localStorage.setItem('shipping_address', false);
+		LightMethodShipping($('#collapse-payment-separator-address select[name=\'light_zone_id\']').val(), $('#collapse-payment-separator-address select[name=\'light_country_id\']').val());
+	} else {
+		localStorage.setItem('shipping_address', '');
+		LightGuestShipping();
+	}
+});
+{% endif %}
+// Login
+$(document).delegate('#button-login', 'click', function() {
+    $.ajax({
+        url: 'index.php?route=lightcheckout/login/save',
+        type: 'post',
+        data: $('#collapse-checkout-option :input'),
+        dataType: 'json',
+        beforeSend: function() {
+        	$('#button-login').button('loading');
+		},
+        complete: function() {
+            $('#button-login').button('reset');
+        },
+        success: function(json) {
+            $('.alert-dismissible, .text-danger').remove();
+            $('.form-group').removeClass('has-error');
+
+            if (json['redirect']) {
+                location = json['redirect'];
+            } else if (json['error']) {
+                $('#tab-login').prepend('<div class="text-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning']);
+
+				// Highlight any found errors
+				{% if light %}
+					$('#tab-login input[name=\'email\']').parent().addClass('has-error');
+					$('#tab-login input[name=\'password\']').parent().addClass('has-error');
+				{% endif %}
+		   }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+});
+
+function LightAddressShipping() {
+	$.ajax({
+		url: 'index.php?route=lightcheckout/shipping_address',
+		dataType: 'html',
+		beforeSend: function() {
+        	$('#shipping-address').addClass('lightloadingTop');
+			$('#shipping-address').show();
+		},
+        complete: function() {
+			$('#shipping-address').removeClass('lightloadingTop');
+			{% if status.shipping_method and shipping_required %}LightMethodShipping();{% endif %}
+			{% if not status.payment_method %}LightCheckoutConfirm();{% endif %}
+        },
+		success: function(html) {
+			
+			$('#collapse-shipping-address .panel-body').html(html);
+
+			$('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }}</a>');
+
+			$('a[href=\'#collapse-shipping-address\']').trigger('click');
+
+			$('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('{% if fields_shipping_methods.shipping_method.name[language_id] %}{{ fields_shipping_methods.shipping_method.name[language_id] }}{% else %}{{ text_checkout_shipping_method }}{% endif %}');
+			$('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{% if fields_payment_methods.payment_method.name[language_id] %}{{ fields_payment_methods.payment_method.name[language_id] }}{% else %}{{ text_checkout_payment_method }}{% endif %}');
+			$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});		
+}
+
+function LightLoginOut() {
+	$.ajax({
+		url: 'index.php?route=lightaccount/logout',
+		dataType: 'html',
+		beforeSend: function() {
+        	
+		},
+        complete: function() {
+			LightCheckout('register');
+			$('#collapse-checkout-option').show();
+			
+			$('#register-guest > .panel > ul > li').each(function(){
+				if ($(this).hasClass('light-logged')) {
+					$(this).removeClass('light-logged').addClass('light-not-logged');
+				} else {
+					$(this).removeClass('light-not-logged').addClass('light-logged');
+				}	
+				$('#register-guest .panel ul').addClass('padding-bottom-0');
+				$('#register-guest').removeAttr('class').addClass('col-lg-5');
+			});
+        },
+		success: function(html) {
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+
+function LightMethodShipping(shipping_zone_id, shipping_country_id) {
+	var get_text = '';
+	if (shipping_zone_id && shipping_country_id) {
+		get_text = '&shipping_zone_id=' + shipping_zone_id + '&shipping_country_id=' + shipping_country_id;
+	}
+	$.ajax({
+		url: 'index.php?route=lightcheckout/shipping_method',
+		dataType: 'html',
+        type: 'post',
+		data: get_text,
+		beforeSend: function() {
+        	$('#shipping_method').addClass('lightloadingTop');
+		},
+        complete: function() {
+			$('#shipping_method').removeClass('lightloadingTop');
+			if (shipping_zone_id && shipping_country_id) {
+				if (Payment_Overlap_Shiping()) {
+					LightMethodPayment(shipping_zone_id, shipping_country_id);
+				}
+			} else {
+				{% if not status.payment_method %}
+					LightCheckoutConfirm();
+				{% endif %}
+			}
+			/*setTimeout(function(){
+				$('input[name=\'shipping_method\']:checked').trigger('change');
+			}, 0);*/
+        },
+		success: function(html) {
+			$('#collapse-shipping-method .panel-body').html(html);
+
+			$('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{% if fields_shipping_methods.shipping_method.name[language_id] %}{{ fields_shipping_methods.shipping_method.name[language_id] }}{% else %}{{ text_checkout_shipping_method }}{% endif %}</a>');
+
+			$('a[href=\'#collapse-shipping-method\']').trigger('click');
+
+			$('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{% if fields_payment_methods.payment_method.name[language_id] %}{{ fields_payment_methods.payment_method.name[language_id] }}{% else %}{{ text_checkout_payment_method }}{% endif %}');
+			$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+	
+}
+
+function LightMethodPaymentAddress(address_id){
+	$.ajax({
+		url: 'index.php?route=lightcheckout/payment_method/accountaddress',
+		type: 'post',
+		data: '&address_id=' + address_id,
+		dataType: 'json',
+		beforeSend: function() {
+        	
+		},
+        complete: function(json) {
+			LightMethodPayment(false, false, 'address_id');
+        },
+		success: function(html) {
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+
+function LightMethodShippingAddress(address_id){
+	$.ajax({
+		url: 'index.php?route=lightcheckout/shipping_method/accountaddress',
+		type: 'post',
+		data: '&address_id=' + address_id,
+		dataType: 'json',
+		beforeSend: function() {
+        	
+		},
+        complete: function(json) {
+			LightMethodShipping(false, false, 'address_id');
+        },
+		success: function(html) {
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+
+function LightMethodPayment(payment_zone_id, payment_country_id) {
+	var get_text = '';
+	if (payment_zone_id && payment_country_id) {
+		get_text = '&zone_id=' + payment_zone_id + '&country_id=' + payment_country_id;
+	}
+	$.ajax({
+		url: 'index.php?route=lightcheckout/payment_method',
+		dataType: 'html',
+		type: 'post',
+		data: get_text,
+		beforeSend: function() {
+        	$('#payment-method').addClass('lightloadingTop');
+		},
+        complete: function() {
+			$('#payment-method').removeClass('lightloadingTop');
+			if (payment_zone_id && payment_country_id) {} else {
+				LightCheckoutConfirm();
+			}
+        },
+		success: function(html) {
+			$('#collapse-payment-method .panel-body').html(html);
+
+			$('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{% if fields_payment_methods.payment_method.name[language_id] %}{{ fields_payment_methods.payment_method.name[language_id] }}{% else %}{{ text_checkout_payment_method }}{% endif %}</a>');
+
+			$('a[href=\'#collapse-payment-method\']').trigger('click');
+
+			$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+
+function LightCheckoutConfirm() {
+	$.ajax({
+		url: 'index.php?route=lightcheckout/confirm',
+		dataType: 'html',
+		beforeSend: function() {
+        	$('#collapse-checkout-confirm').addClass('lightloadingTop');
+		},
+		complete: function() {
+			$('.lightloadingTop').removeClass('lightloadingTop');
+			$('.lightloading').removeClass('lightloading');
+		},
+		success: function(html) {
+
+			$('#collapse-checkout-confirm .panel-body').html(html);
+
+			$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_confirm }}</a>');
+
+			$('a[href=\'#collapse-checkout-confirm\']').trigger('click');
+			
+			$('#button-lightconfirm-false').attr('id', 'button-lightconfirm').removeAttr('disabled');
+
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+function LightTop() {
+	$('html, body').animate({ scrollTop: 0 }, 'slow');
+}
+function LightPaymentAddress() {
+	$.ajax({
+		url: 'index.php?route=lightcheckout/payment_address',
+		dataType: 'html',
+		complete: function() {
+		},
+		success: function(html) {
+			$('#collapse-payment-separator-address .panel-body').html(html);
+
+			$('#collapse-payment-address').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_payment_address }} <i class="fa fa-caret-down"></i></a>');
+			
+			LightMethodPayment();
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+// Register
+function LightRegister(confirm) {
+    $.ajax({
+        url: 'index.php?route=lightcheckout/register/save',
+        type: 'post',
+        data: $('#collapse-checkout-option input[type=\'radio\']:checked,#collapse-payment-address input[type=\'text\'], #collapse-payment-address input[type=\'date\'], #collapse-payment-address input[type=\'datetime-local\'], #collapse-payment-address input[type=\'time\'], #collapse-payment-address input[type=\'password\'], #collapse-payment-address input[type=\'hidden\'], #collapse-payment-address input[type=\'checkbox\']:checked, #collapse-payment-address input[type=\'radio\']:checked, #collapse-payment-address textarea, #collapse-payment-address select,#collapse-payment-separator-address input[type=\'text\'], #collapse-payment-separator-address input[type=\'date\'], #collapse-payment-separator-address input[type=\'datetime-local\'], #collapse-payment-separator-address input[type=\'time\'], #collapse-payment-separator-address input[type=\'password\'], #collapse-payment-separator-address input[type=\'hidden\'], #collapse-payment-separator-address input[type=\'checkbox\']:checked, #collapse-payment-separator-address input[type=\'radio\']:checked, #collapse-payment-separator-address textarea, #collapse-payment-separator-address select'),
+        dataType: 'json',
+        beforeSend: function() {
+		},
+		complete: function() {
+			setTimeout(function() {
+				/*$('#collapse-payment-address #register-account,#collapse-payment-address #checkbox-confirm').remove();*/
+			}, 0);			
+		},
+        success: function(json) {
+            $('.alert-dismissible, #collapse-payment-separator-address .text-danger').remove();
+            $('#collapse-payment-separator-address .form-group').removeClass('has-error');
+
+            if (json['redirect']) {
+                /*location = json['redirect'];*/
+            } else if (json['error']) {
+				$('#button-lightconfirm').button('reset');
+                if (json['error']['warning']) {
+                    $('#collapse-payment-address .panel-body').prepend('<div class="text-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning']);
+                }
+
+				for (i in json['error']) {
+					var element = $('#input-payment-' + i.replace('_', '-'));
+
+					if ($(element).parent().hasClass('input-group')) {
+						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+					} else {
+						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+					}
+				}
+
+				// Highlight any found errors
+				{% if light %}
+					$('.text-danger').parent().addClass('has-error');
+					$('#collapse-payment-separator-address .text-danger').parent().addClass('has-error');
+				{% endif %}
+				$('#collapse-payment-method').removeClass('lightloadingTop');
+				$('#accordion').removeClass('lightloading');
+            } else {
+				
+				if (confirm != 'confirm') {
+					LightPaymentAddress();
+				}
+            }
+			if (!json['error']){
+				if (confirm == 'confirm') {
+					{% if shipping_required and status.shipping %}
+						LightShippingAddressSave(confirm);
+					{% else %}
+						{% if status.shipping_method and shipping_required %}
+							LightShippingMethodSave(confirm);
+						{% elseif status.payment_method %}
+							LightPaymentMethodSave(confirm);
+						{% else %}
+							LightConfirmSave();
+						{% endif %}
+					{% endif %}
+				}
+			}
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+			
+			{% if shipping_required %}
+			
+                var shipping_address = $('#payment-address input[name=\'shipping_address\']:checked').prop('value');
+
+                if (shipping_address) {
+                    $.ajax({
+                        url: 'index.php?route=lightcheckout/shipping_method',
+                        dataType: 'html',
+                        success: function(html) {
+							// Add the shipping address
+                            $.ajax({
+                                url: 'index.php?route=lightcheckout/shipping_address',
+                                dataType: 'html',
+                                success: function(html) {
+                                    $('#collapse-shipping-address .panel-body').html(html);
+
+									$('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
+									
+									LightPaymentAddressSave('confirm');
+                                },
+                                error: function(xhr, ajaxOptions, thrownError) {
+                                    /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+                                }
+                            });
+
+							$('#collapse-shipping-method .panel-body').html(html);
+
+							$('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{% if fields_shipping_methods.shipping_method.name[language_id] %}{{ fields_shipping_methods.shipping_method.name[language_id] }}{% else %}{{ text_checkout_shipping_method }}{% endif %} <i class="fa fa-caret-down"></i></a>');
+
+   							$('a[href=\'#collapse-shipping-method\']').trigger('click');
+
+							$('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('{% if fields_shipping_methods.shipping_method.name[language_id] %}{{ fields_shipping_methods.shipping_method.name[language_id] }}{% else %}{{ text_checkout_shipping_method }}{% endif %}');
+							$('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{% if fields_payment_methods.payment_method.name[language_id] %}{{ fields_payment_methods.payment_method.name[language_id] }}{% else %}{{ text_checkout_payment_method }}{% endif %}');
+							$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
+							
+							
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+                        }
+                    });
+                } else {
+                    
+                }
+                {% else %}
+                
+			{% endif %}
+			
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+
+// Payment Address
+function LightPaymentAddressSave() {
+    $.ajax({
+        url: 'index.php?route=lightcheckout/payment_address/save',
+        type: 'post',
+        data: $('#collapse-payment-separator-address input[type=\'text\'], #collapse-payment-separator-address input[type=\'date\'], #collapse-payment-separator-address input[type=\'datetime-local\'], #collapse-payment-separator-address input[type=\'time\'], #collapse-payment-separator-address input[type=\'password\'], #collapse-payment-separator-address input[type=\'checkbox\']:checked, #collapse-payment-separator-address input[type=\'radio\']:checked, #collapse-payment-separator-address input[type=\'hidden\'], #collapse-payment-separator-address textarea, #collapse-payment-separator-address select'),
+        dataType: 'json',
+        beforeSend: function() {
+        	
+		},
+        complete: function() {
+			
+        },
+        success: function(json) {
+            $('.alert-dismissible, .text-danger').remove();
+			$('.form-group').removeClass('has-error');
+
+            if (json['redirect']) {
+                /*location = json['redirect'];*/
+            } else if (json['error']) {
+				$('#button-lightconfirm').button('reset');
+                if (json['error']['warning']) {
+                    $('#collapse-payment-separator-address .panel-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning']);
+                }
+
+				for (i in json['error']) {
+					var element = $('#input-payment-' + i.replace('_', '-'));
+
+					if ($(element).parent().hasClass('input-group')) {
+						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+					} else {
+						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+					}
+				}
+
+				// Highlight any found errors
+				{% if light %}
+					$('.text-danger').parent().addClass('has-error');
+				{% endif %}
+				$('#collapse-payment-method').removeClass('lightloadingTop');
+				$('#accordion').removeClass('lightloading');
+            } else {
+				{% if status.shipping and shipping_required %}
+					LightShippingAddressSave('confirm');
+				{% elseif status.shipping_method and shipping_required %}
+					LightShippingMethodSave('confirm');
+				{% elseif status.payment_method %}
+					LightPaymentMethodSave('confirm');
+				{% else %}
+					LightConfirmSave();
+				{% endif %}
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+
+// Shipping Address Save
+function LightShippingAddressSave(confirm) {
+	var data_payment_separator_address = ', #collapse-payment-address input[type=\'text\'], #collapse-address input[type=\'date\'], #collapse-payment-address input[type=\'datetime-local\'], #collapse-payment-address input[type=\'time\'], #collapse-payment-address input[type=\'password\'], #collapse-payment-address input[type=\'checkbox\']:checked, #collapse-payment-address input[type=\'radio\']:checked, #collapse-payment-address textarea, #collapse-payment-address select, #collapse-payment-separator-address input[type=\'text\'], #collapse-payment-separator-address input[type=\'date\'], #collapse-payment-separator-address input[type=\'datetime-local\'], #collapse-payment-separator-address input[type=\'time\'], #collapse-payment-separator-address input[type=\'password\'], #collapse-payment-separator-address input[type=\'checkbox\']:checked, #collapse-payment-separator-address input[type=\'radio\']:checked, #collapse-payment-separator-address textarea, #collapse-payment-separator-address select';
+	
+    $.ajax({
+        url: 'index.php?route=lightcheckout/shipping_address/save',
+        type: 'post',
+        data: $('#collapse-shipping-address input[type=\'text\'], #collapse-shipping-address input[type=\'date\'], #collapse-shipping-address input[type=\'datetime-local\'], #collapse-shipping-address input[type=\'time\'], #collapse-shipping-address input[type=\'password\'], #collapse-shipping-address input[type=\'checkbox\']:checked, #collapse-shipping-address input[type=\'radio\']:checked, #collapse-shipping-address textarea, #collapse-shipping-address select, #collapse-shipping-address input[type=\'hidden\']' + data_payment_separator_address),
+        dataType: 'json',
+        beforeSend: function() {},
+		complete: function() {},
+        success: function(json) {
+            $('.alert-dismissible, #collapse-shipping-address .text-danger').remove();
+			$('#collapse-shipping-address .form-group').removeClass('has-error');
+
+            if (json['redirect']) {
+                /*location = json['redirect'];*/
+            } else if (json['error']) {
+				$('#button-lightconfirm').button('reset');
+				var text_name_option = 'shipping';
+				
+				if (json['shipping_address']) {
+					text_name_option = 'payment';
+				}
+
+                if (json['error']['warning']) {
+                    $('#collapse-shipping-address .panel-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning']);
+                }
+
+				for (i in json['error']) {
+					var element = $('#input-' + text_name_option + '-' + i.replace('_', '-'));
+
+					if ($(element).parent().hasClass('input-group')) {
+						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+					} else {
+						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+					}
+				}
+
+				// Highlight any found errors				
+				{% if light %}
+					$('#collapse-shipping-address .text-danger').parent().addClass('has-error');
+				{% endif %}
+				$('#collapse-payment-method').removeClass('lightloadingTop');
+				$('#accordion').removeClass('lightloading');
+            } else {
+                if (confirm == 'confirm') {
+					{% if status.shipping_method and shipping_required %}
+						LightShippingMethodSave(confirm);
+					{% elseif status.payment_method %}
+						LightPaymentMethodSave('confirm');
+					{% else %}
+						LightConfirmSave();
+					{% endif %}
+				}
+				
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+
+function GuestSave() {
+    $.ajax({
+        url: 'index.php?route=lightcheckout/guest/save',
+        type: 'post',
+        data: $('#collapse-payment-address input[type=\'text\'], #collapse-payment-address input[type=\'date\'], #collapse-payment-address input[type=\'datetime-local\'], #collapse-payment-address input[type=\'time\'], #collapse-payment-address input[type=\'checkbox\']:checked, #collapse-payment-address input[type=\'radio\']:checked, #collapse-payment-address input[type=\'hidden\'], #collapse-payment-address textarea, #collapse-payment-address select, #collapse-payment-separator-address input[type=\'text\'], #collapse-payment-separator-address input[type=\'date\'], #collapse-payment-separator-address input[type=\'datetime-local\'], #collapse-payment-separator-address input[type=\'time\'], #collapse-payment-separator-address input[type=\'checkbox\']:checked, #collapse-payment-separator-address input[type=\'radio\']:checked, #collapse-payment-separator-address input[type=\'hidden\'], #collapse-payment-separator-address textarea, #collapse-payment-separator-address select'),
+        dataType: 'json',
+        beforeSend: function() {
+       		
+	    },
+		complete: function() {
+       		
+	    },
+        success: function(json) {
+            $('.alert-dismissible, .text-danger').remove();
+			$('.form-group').removeClass('has-error');
+
+            if (json['redirect']) {
+                location = json['redirect'];
+            } else if (json['error']) {
+                $('#button-lightconfirm').button('reset');
+                if (json['error']['warning']) {
+                    $('#collapse-payment-separator-address .panel-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning']);
+                }
+
+				for (i in json['error']) {
+					var element = $('#input-payment-' + i.replace('_', '-'));
+
+					if ($(element).parent().hasClass('input-group')) {
+						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+					} else {
+						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+					}
+				}
+
+				// Highlight any found errors
+				{% if light %}
+					$('.text-danger').parent().addClass('has-error');
+				{% endif %}
+				$('#collapse-payment-method').removeClass('lightloadingTop');
+				$('#accordion').removeClass('lightloading');
+            } else {
+                {% if shipping_required %}
+					/*if (json['no_shipping_address']) {
+						LightGuestShipping();
+					}*/
+                    /*LightGuestShippingSave();*/
+                {% else %}
+					LightPaymentMethodSave();
+                {% endif %}				
+				{% if shipping_required and status.shipping %}
+					LightGuestShippingSave();
+				{% else %}
+					/*
+					{% if status.payment_address %}
+						LightPaymentAddressSave();
+					{% elseif status.payment_method %}
+						LightPaymentMethodSave(confirm);
+					{% else %}
+						LightConfirmSave();
+					{% endif %}
+					*/
+					{% if status.shipping_method %}
+						LightShippingMethodSave('confirm');
+					{% elseif status.payment_method %}
+						LightPaymentMethodSave('confirm');
+					{% else %}
+						LightConfirmSave();
+					{% endif %}					
+				{% endif %}
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+function LightGuestShipping() {
+	$.ajax({
+		url: 'index.php?route=lightcheckout/guest_shipping',
+		dataType: 'html',
+		success: function(html) {
+			$('#collapse-shipping-address .panel-body').html(html);
+			
+			$('#shipping-address').show();
+
+			$('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+// Guest Shipping Save
+function LightGuestShippingSave() {
+	var data_payment_separator_address = ', #collapse-payment-address input[type=\'text\'], #collapse-address input[type=\'date\'], #collapse-payment-address input[type=\'datetime-local\'], #collapse-payment-address input[type=\'time\'], #collapse-payment-address input[type=\'password\'], #collapse-payment-address input[type=\'checkbox\']:checked, #collapse-payment-address input[type=\'radio\']:checked, #collapse-payment-address textarea, #collapse-payment-address select, #collapse-payment-separator-address input[type=\'text\'], #collapse-payment-separator-address input[type=\'date\'], #collapse-payment-separator-address input[type=\'datetime-local\'], #collapse-payment-separator-address input[type=\'time\'], #collapse-payment-separator-address input[type=\'password\'], #collapse-payment-separator-address input[type=\'checkbox\']:checked, #collapse-payment-separator-address input[type=\'radio\']:checked, #collapse-payment-separator-address textarea, #collapse-payment-separator-address select';
+    $.ajax({
+        url: 'index.php?route=lightcheckout/guest_shipping/save',
+        type: 'post',
+        data: $('#collapse-shipping-address input[type=\'text\'], #collapse-shipping-address input[type=\'date\'], #collapse-shipping-address input[type=\'datetime-local\'], #collapse-shipping-address input[type=\'time\'], #collapse-shipping-address input[type=\'password\'], #collapse-shipping-address input[type=\'checkbox\']:checked, #collapse-shipping-address input[type=\'radio\']:checked, #collapse-shipping-address textarea, #collapse-shipping-address select' + data_payment_separator_address),
+        dataType: 'json',
+        beforeSend: function() {
+        	
+		},
+        success: function(json) {
+            $('.alert-dismissible, .text-danger').remove();
+			$('.form-group').removeClass('has-error');
+
+            if (json['redirect']) {
+                location = json['redirect'];
+            } else if (json['error']) {
+				$('#button-lightconfirm').button('reset');
+                if (json['error']['warning']) {
+                    $('#collapse-shipping-address .panel-body').prepend('<div class="text-danger">' + json['error']['warning']);
+                }
+
+				for (i in json['error']) {
+					var element = $('#input-shipping-' + i.replace('_', '-'));
+
+					if ($(element).parent().hasClass('input-group')) {
+						$(element).parent().after('<div class="text-danger">' + json['error'][i] + '</div>');
+					} else {
+						$(element).after('<div class="text-danger">' + json['error'][i] + '</div>');
+					}
+				}
+
+				// Highlight any found errors
+				{% if light %}
+					$('.text-danger').parent().addClass('has-error');
+				{% endif %}
+				$('#collapse-payment-method').removeClass('lightloadingTop');
+				$('#accordion').removeClass('lightloading');
+            } else {
+                {% if shipping_required and status.shipping_method %}				
+					LightShippingMethodSave('confirm');
+				{% elseif status.payment_method %}
+					LightPaymentMethodSave(confirm);
+				{% else %}
+					LightConfirmSave();
+				{% endif %}
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+function LightShippingMethodSave(confirm) {
+	var updatecart = '';
+	if (confirm == 'updatecart') {
+		updatecart = '&updatecart=1';
+	}
+	$.ajax({
+        url: 'index.php?route=lightcheckout/shipping_method/save' + updatecart,
+        type: 'post',
+        data: $('#collapse-shipping-method input[type=\'radio\']:checked, #collapse-shipping-method textarea'),
+        dataType: 'json',
+		beforeSend: function() {
+			if (confirm == 'updatecart') {
+				$('#accordion').addClass('lightloading');
+			}
+		},
+		complete: function() {
+        	if (confirm == 'updatecart') {
+				LightCartUpdate();
+			}
+		},
+        success: function(json) {
+            $('.alert-dismissible, .text-danger').remove();
+
+            if (json['redirect']) {
+                location = json['redirect'];
+            } else if (json['error']) {
+				$('#button-lightconfirm').button('reset');
+                if (json['error']['warning']) {
+                    $('#collapse-shipping-method .panel-body').prepend('<div class="text-danger">' + json['error']['warning']);
+                }
+				if (json['error']['comment']) {
+					$('textarea#shipping-method').after('<div class="text-danger">' + json['error']['comment'] + '</div>');
+				}
+				$('#collapse-payment-method').removeClass('lightloadingTop');
+				$('#accordion').removeClass('lightloading');
+            } else {
+                if (confirm == 'confirm') {
+					{% if status.payment_method %}
+						LightPaymentMethodSave(confirm);
+					{% else %}
+						LightConfirmSave();
+					{% endif %}
+				}
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+
+function LightConfirmSave() {
+	$.ajax({
+		url: 'index.php?route=lightcheckout/confirm&save=1',
+		dataType: 'html',
+		complete: function() {
+			$('#button-lightconfirm').button('reset');
+		},
+		success: function(html) {
+			$('#collapse-checkout-confirm .panel-body').html(html);
+
+			$('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('<a data-parent="#accordion" class="accordion-toggle">{{ text_checkout_confirm }} <i class="fa fa-caret-down"></i></a>');
+
+			$('a[href=\'#collapse-checkout-confirm\']').trigger('click');
+
+			$('#continue-button').trigger('click')
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+}
+function LightPaymentMethodSave(confirm) {
+	var updatecart = '';
+	if (confirm == 'updatecart') {
+		updatecart = '&updatecart=1';
+	}
+    $.ajax({
+        url: 'index.php?route=lightcheckout/payment_method/save' + updatecart,
+        type: 'post',
+        data: $('#collapse-payment-method input[type=\'radio\']:checked, #collapse-payment-method input[type=\'checkbox\']:checked, #collapse-payment-method textarea'),
+        dataType: 'json',
+		beforeSend: function(json) {
+			if (json['error']) {} else {
+				$('#collapse-payment-method').addClass('lightloadingTop');
+				$('#accordion').addClass('lightloading');
+			}
+			if (confirm == 'updatecart') {
+				$('#accordion').addClass('lightloading');
+			}
+		},
+		complete: function() {
+        	if (confirm == 'updatecart') {
+				LightCartUpdate();
+			}
+		},        
+        success: function(json) {
+            $('.alert-dismissible, .text-danger').remove();
+
+            if (json['redirect']) {
+                location = json['redirect'];
+            } else if (json['error']) {
+                $('#button-lightconfirm').button('reset');
+                if (json['error']['warning']) {
+                    $('#collapse-payment-method .panel-body').prepend('<div class="text-danger">' + json['error']['warning']);
+                }
+				if (json['error']['comment']) {
+				$('textarea#payment-method').after('<div class="text-danger">' + json['error']['comment'] + '</div>');
+				}
+				$('#collapse-payment-method').removeClass('lightloadingTop');
+				$('#accordion').removeClass('lightloading');
+            } else {
+				if (confirm != 'updatecart') {
+					LightConfirmSave();
+				}
+            }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            /*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+        }
+    });
+}
+LightcheckoutThemesJs('{{ theme }}');
+//--></script>
+<style>
+{% if not error %}
+	.text-danger {
+		display: none;
+	}
+{% endif %}
+{% if theme == 'oct_feelmart' %}
+	
+{% endif %}
+</style>
+{{ footer }}

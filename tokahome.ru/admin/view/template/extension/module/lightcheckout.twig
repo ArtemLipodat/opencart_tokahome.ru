@@ -1,0 +1,1059 @@
+{% if not id %}
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button onClick="lightrequestpost(); return false;" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+	{% if debugging %}<div class="alert alert-warning alert-dismissible"><i class="fa fa-check-circle"></i> {{ debugging }}<button data-dismiss="alert" class="close" type="button">×</button></div>{% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+		  <ul class="nav nav-tabs">
+            <li><a href="#tab-settings" data-toggle="tab"><i class="fa fa-cogs" aria-hidden="true"></i> {{ text_settings }}</a></li>
+			<li class="active"><a href="#tab-structure" data-toggle="tab"><i class="fa fa-sliders" aria-hidden="true"></i> {{ text_structure }}</a></li>
+			<li><a href="#tab-html" data-toggle="tab"><i class="fa fa-code" aria-hidden="true"></i> {{ text_html }}</a></li>
+			<li><a href="#tab-localisation" data-toggle="tab"><i class="fa fa-map-marker" aria-hidden="true"></i> {{ text_localisation }}</a></li>
+			<li><a href="#tab-seo-url" data-toggle="tab"><i class="fa fa-tags" aria-hidden="true"></i> {{ text_seo_url }}</a></li>
+			<li><a href="#tab-restrictions" data-toggle="tab"><i class="fa fa-glass" aria-hidden="true"></i> {{ text_restrictions }}</a></li>
+			<li><a href="#tab-template" data-toggle="tab"><i class="fa fa-puzzle-piece" aria-hidden="true"></i> {{ text_template }}</a></li>
+			<li><a href="#tab-payment" data-toggle="tab"><i class="fa fa-credit-card" aria-hidden="true"></i> {{ text_payment }}</a></li>
+		  </ul>
+		  <div class="tab-content">
+            <div class="tab-pane" id="tab-settings">
+			  <div class="col-sm-12">
+				<div class="row">
+				  <div class="col-sm-5 text-center">
+					<div class="alert alert-info margin-auto"><i class="fa fa-info" aria-hidden="true"></i> {{ text_info_system }}</div>
+				  </div>
+				  <div class="col-sm-7 text-center">
+					<div class="alert alert-info margin-auto"><i class="fa fa-info" aria-hidden="true"></i> {{ text_info_more }}</div>
+				  </div>
+				</div>
+			  <div class="form-group">
+				<div class="col-sm-5">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_status }} <span data-toggle="tooltip" title="{{ entry_help_status }}"></span></label>
+				  <div class="col-sm-6 text-left">
+				    <div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="module_lightcheckout_status" name="module_lightcheckout_status"{% if module_lightcheckout_status %} checked=""{% endif %} data-name="module_lightcheckout_status">
+					  <label for="module_lightcheckout_status"></label>
+					  <input type="hidden" name="module_lightcheckout_code" value="{% if module_lightcheckout_code %}{{ module_lightcheckout_code }}{% endif %}" />
+					</div>
+				  </div>
+				</div>
+				<div class="col-sm-7">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_qty }} <span data-toggle="tooltip" title="{{ entry_help_qty }}"></span></label>
+				  <div class="col-sm-6 text-left">
+				    <div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="qty" name="lightsettings[qty]"{% if qty %} checked=""{% endif %} data-name="qty">
+					  <label for="qty"></label>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<div class="col-sm-5">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_debugging }} <span data-toggle="tooltip" title="{{ entry_help_debugging }}"></span><br /><a target="_blank" href="{{ tech_address }}" alt="" title="">{{ entry_help_debugging_domen }}</a></label>
+				  <div class="col-sm-6 text-left">
+				    <div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="module_lightcheckout_debugging" name="module_lightcheckout_debugging"{% if module_lightcheckout_debugging %} checked=""{% endif %} data-name="module_lightcheckout_debugging">
+					  <label for="module_lightcheckout_debugging"></label>
+					</div>
+				  </div>
+				</div>
+				<div class="col-sm-7">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_light }} <span data-toggle="tooltip" title="{{ entry_help_light }}"></span></label>
+				  <div class="col-sm-6 text-left">
+				    <div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="light" name="lightsettings[light]"{% if light %} checked=""{% endif %} data-name="light">
+					  <label for="light"></label>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<div class="col-sm-5">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_skip_cart }} <span data-toggle="tooltip" title="{{ entry_help_skip_cart }}"></span></label>
+				  <div class="col-sm-6 text-left">
+				    <div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="module_lightcheckout_skipcart" name="module_lightcheckout_skipcart"{% if module_lightcheckout_skipcart %} checked=""{% endif %} data-name="module_lightcheckout_skipcart">
+					  <label for="module_lightcheckout_skipcart"></label>
+					</div>
+				  </div>
+				</div>
+				<div class="col-sm-7">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_error }} <span data-toggle="tooltip" title="{{ entry_help_error }}"></span></label>
+				  <div class="col-sm-6 text-left">
+				    <div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="error" name="lightsettings[error]"{% if error %} checked=""{% endif %} data-name="error">
+					  <label for="error"></label>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  </div>
+			</div>
+			<div class="tab-pane lightmodule active" id="tab-structure">
+			  <div class="row">
+			    <div class="col-lg-2 col-sm-3 col-xs-12">
+				  <div class="input-group lighthelp">
+				    <span class="input-group-addon">
+					  <i class="fa fa-info " aria-hidden="true"></i>
+				    </span>
+				    <label class="form-control control-label">
+					  <span data-toggle="tooltip" title="" data-original-title="{{ text_structure_toggle_help }}">{{ text_structure_help }}</span>
+				    </label>
+				  </div><br />
+				  <div class="input-group lighthelp">
+				    <span class="input-group-addon">
+					  <i class="fa fa-info " aria-hidden="true"></i>
+				    </span>
+				    <label class="form-control control-label">
+					  <span data-toggle="tooltip" title="" data-original-title="{{ text_width_toggle_help }}">{{ text_width_help }}</span>
+				    </label>
+				  </div>
+			    </div>
+			    <div class="col-lg-10 col-sm-9 col-xs-12">
+				  <div class="row">
+				    <div class="light-design">
+					  <input name="light_checkout[column][1]" id="light-left-design" data-slider-id='light-design' type="text" data-slider-min="0" data-slider-max="12" data-slider-step="1" data-slider-value="{{ columns.1 }}"/>
+				    </div>	  
+				    <div class="col-sm-4">
+					  <div id="light-left" class="table-bordered padding numeration-bg">
+					    <ol class="light-left list-unstyled" data-group-id="1">
+						  {% if results %}
+						    {% for name,result in results[1] %}
+							  <li id="light-{{ name }}" class="cursor-move margin-bottom">
+							    <div class="text-center">
+								  <div class="input-group-addon"><i class="fa {{ result.icon }}"></i> <strong>{{ result.text }}</strong>
+								    {% if name != 'cart' and name != 'confirm' %}<div class="lightOnOff">  
+								      <input type="checkbox" value="1" id="lightOnOff_{{ name }}" name="light_checkout[status][{{ name }}]"{% if result.status %} checked=""{% endif %} data-name="light-{{ name }}">
+								      <label for="lightOnOff_{{ name }}"></label>
+								    </div>{% endif %}
+								  </div>
+								  <span class="clearfix"></span>
+								  <b class="input-group">
+									  <label class="form-control">
+									    <br /><span>{{ result.text_help }}</span><br /><br />
+									  </label>
+									  <span class="input-group-addon"><i class="fa fa-edit" data-toggle="tooltip" title="{{ text_help_setting_element }}" onClick="CheckedFields('{{ result.name }}');"></i></span>
+								  </b>
+								  <input type="hidden" name="light_checkout[sort][1][{{ name }}]" value="{{ result.sort }}" data-name="{{ name }}" />
+							    </div>
+							  </li>
+						    {% endfor %}
+						  {% endif %}
+					    </ol>
+					  </div>
+				    </div>
+				    <div class="col-sm-8">
+					  <div class="light-design-right">
+					    <input name="light_checkout[column][3]" id="light-right-design" data-slider-id='light-design-right' type="text" data-slider-min="0" data-slider-max="12" data-slider-step="1" data-slider-value="{{ columns.3 }}"/>
+					  </div>
+				      <div id="light-right">
+					    <div class="row">
+						  <div class="col-sm-6 margin-bottom numeration-bg" id="light-right-1">
+						    <ol class="light-left padding table-bordered list-unstyled" data-group-id="2">
+							  {% if results %}
+							    {% for name,result in results[2] %}
+								  <li id="light-{{ name }}" class="cursor-move margin-bottom">
+								    <div class="text-center">
+									  <div class="input-group-addon"><i class="fa {{ result.icon }}"></i> <strong>{{ result.text }}</strong>
+									  {% if name != 'cart' and name != 'confirm' %}<div class="lightOnOff">  
+									    <input type="checkbox" value="1" id="lightOnOff_{{ name }}" name="light_checkout[status][{{ name }}]"{% if result.status %} checked=""{% endif %} data-name="light-{{ name }}">
+									    <label for="lightOnOff_{{ name }}"></label>
+									  </div>{% endif %}
+									  </div>									
+									  <span class="clearfix"></span>
+									  <b class="input-group">
+										<label class="form-control">
+										  <br /><span>{{ result.text_help }}</span><br /><br />
+										</label>
+										<span class="input-group-addon"><i class="fa fa-edit" data-toggle="tooltip" title="{{ text_help_setting_element }}" onClick="CheckedFields('{{ result.name }}');"></i></span>
+									  </b>
+									  <input type="hidden" name="light_checkout[sort][2][{{ name }}]" value="{{ result.sort }}" data-name="{{ name }}" />
+								    </div>
+								  </li>
+							    {% endfor %}
+							  {% endif %}
+						    </ol>
+						  </div>
+						  <div class="col-sm-6 margin-bottom numeration-bg" id="light-right-2">
+						    <ol class="light-left padding table-bordered list-unstyled" data-group-id="3">
+							  {% if results %}
+							    {% for name,result in results[3] %}
+								  <li id="light-{{ name }}" class="cursor-move margin-bottom">
+								    <div class="text-center">
+									  <div class="input-group-addon"><i class="fa {{ result.icon }}"></i> <strong>{{ result.text }}</strong>
+									  {% if name != 'cart' and name != 'confirm' %}<div class="lightOnOff">  
+									  <input type="checkbox" value="1" id="lightOnOff_{{ name }}" name="light_checkout[status][{{ name }}]"{% if result.status %} checked=""{% endif %} data-name="light-{{ name }}">
+									    <label for="lightOnOff_{{ name }}"></label>
+									    </div>{% endif %}
+									  </div>									
+									  <span class="clearfix"></span>
+									  <b class="input-group">
+										<label class="form-control">
+										  <br /><span>{{ result.text_help }}</span><br /><br />
+										</label>
+										<span class="input-group-addon"><i class="fa fa-edit" data-toggle="tooltip" title="{{ text_help_setting_element }}" onClick="CheckedFields('{{ result.name }}');"></i></span>
+									  </b>
+									  <input type="hidden" name="light_checkout[sort][3][{{ name }}]" value="{{ result.sort }}" data-name="{{ name }}" />
+								    </div>
+								  </li>
+							    {% endfor %}
+							  {% endif %}
+						    </ol>
+						  </div>
+						  <div class="col-sm-12">	
+							<div class="col-sm-12 margin-bottom table-bordered padding numeration-bg" id="light-right-3">
+							  <ol class="light-left list-unstyled" data-group-id="4">
+								{% if results %}
+								  {% for name,result in results[4] %}
+									<li id="light-{{ name }}" class="cursor-move margin-bottom">
+									  <div class="text-center">
+										<div class="input-group-addon"><i class="fa {{ result.icon }}"></i> <strong>{{ result.text }}</strong>
+										{% if name != 'cart' and name != 'confirm' %}<div class="lightOnOff">  
+										  <input type="checkbox" value="1" id="lightOnOff_{{ name }}" name="light_checkout[status][{{ name }}]"{% if result.status %} checked=""{% endif %} data-name="light-{{ name }}">
+										  <label for="lightOnOff_{{ name }}"></label>
+										</div>{% endif %}
+										</div>										
+										<span class="clearfix"></span>
+										<b class="input-group">
+											<label class="form-control">
+											  <br /><span>{{ result.text_help }}</span><br /><br />
+											</label>
+											<span class="input-group-addon"><i class="fa fa-edit" data-toggle="tooltip" title="{{ text_help_setting_element }}" onClick="CheckedFields('{{ result.name }}');"></i></span>
+										</b>
+										<input type="hidden" name="light_checkout[sort][4][{{ name }}]" value="{{ result.sort }}" data-name="{{ name }}" />
+									  </div>									</li>
+								  {% endfor %}
+								{% endif %}
+							  </ol>
+							</div>
+						  </div>
+					    </div>
+				      </div>
+				    </div>
+				  </div>
+			    </div>
+			  </div>
+			</div>
+			<div class="tab-pane" id="tab-html">
+			  <div class="form-group">
+				<label class="col-sm-3 control-label" for="input-status">{{ entry_html_top }} <span data-toggle="tooltip" title="{{ entry_help_html_top }}"></span></label>
+				<div class="col-sm-9 text-left">
+				  <ul class="nav nav-tabs" id="languagetop">
+					{% for language in languages %}
+					<li><a href="#languagetop{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+					{% endfor %}
+				  </ul>
+				  <div class="tab-content">
+					{% for language in languages %}
+					  <div class="tab-pane" id="languagetop{{ language.language_id }}">
+					    <textarea value="1" id="masterhtml[top]" name="masterhtml[top][{{ language.language_id }}]" data-toggle="summernote" data-lang="{{ summernote }}" class="form-control">{% if htmls.top[language.language_id] %}{{ htmls.top[language.language_id] }}{% endif %}</textarea>
+					  </div>
+					{% endfor %}
+				  </div>
+				</div>				  
+			  </div>
+			  <div class="form-group">
+				<label class="col-sm-3 control-label" for="input-status">{{ entry_html_bottom }} <span data-toggle="tooltip" title="{{ entry_help_html_bottom }}"></span></label>
+				<div class="col-sm-9 text-left">
+				  <ul class="nav nav-tabs" id="languagebottom">
+					{% for language in languages %}
+					<li><a href="#languagebottom{{ language.language_id }}" data-toggle="tab"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" /> {{ language.name }}</a></li>
+					{% endfor %}
+				  </ul>
+				  <div class="tab-content">
+					{% for language in languages %}
+					  <div class="tab-pane" id="languagebottom{{ language.language_id }}">
+					    <textarea value="1" id="masterhtml[bottom]" name="masterhtml[bottom][{{ language.language_id }}]" data-toggle="summernote" data-lang="{{ summernote }}" class="form-control">{% if htmls.bottom[language.language_id] %}{{ htmls.bottom[language.language_id] }}{% endif %}</textarea>
+					  </div>
+					{% endfor %}
+				  </div>
+				</div>
+			  </div>
+			</div>
+			<div class="tab-pane" id="tab-localisation">
+			  <div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_help_localization }}</div>
+			  <div class="form-group">
+				<label class="col-sm-2 control-label" for="input-country">{{ entry_default_country_id }}&nbsp;<span data-toggle="tooltip" title="{{ entry_help_localization }}"></span></label>
+				<div class="col-sm-10">
+				  <select name="lightsettings[country_id]" id="input-country" class="form-control">
+					<option value="">{{ text_select }}</option>
+					{% for country in countries %}
+					  {% if country.country_id == country_id %}
+					  <option value="{{ country.country_id }}" selected="selected">{{ country.name }}</option>
+					  {% else %}
+					  <option value="{{ country.country_id }}">{{ country.name }}</option>
+					  {% endif %}
+					{% endfor %}
+				  </select>
+				</div>
+			  </div>
+			  <div class="form-group">
+				<label class="col-sm-2 control-label" for="input-zone">{{ entry_default_zone_id }}&nbsp;<span data-toggle="tooltip" title="{{ entry_help_localization }}"></span></label>
+				<div class="col-sm-10">
+				  <select name="lightsettings[zone_id]" id="input-zone" class="form-control">
+					<option value="">{{ text_select }}</option>
+					{% if zones %}
+				      <option value="0" selected="selected">{{ text_none }}</option>
+				      {% for zone in zones %}
+					    <option value="{{ zone.zone_id }}"{% if zone.zone_id == zone_id %} selected="selected"{% endif %}>{{ zone.name }}</option>
+				      {% endfor %}
+				    {% endif %}
+				  </select>
+				</div>
+			  </div>
+			</div>
+			<div class="tab-pane" id="tab-seo-url">
+			  <div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_help_seo_url_on_1 }}</div>
+			  <div class="col-sm-12">
+			  <div class="form-group">
+				<label class="col-sm-3 control-label" for="input-zone"><br />{{ entry_seo_store }}&nbsp;<span data-toggle="tooltip" title="{{ entry_help_seo_store }}"></span></label>
+				  <div class="col-sm-9">
+						<div class="form-group">
+							<div class="well well-sm" style="height: 150px; overflow: auto;" id="seo_store">
+								{% for store in stores %}
+								  <div class="checkbox">
+									{% if store.store_id in settingsstore or settings_empty %}
+									  <input id="store{{ store.store_id }}" type="checkbox" name="lightsettings[store][]" value="{{ store.store_id }}" checked="checked" />
+									{% else %}
+									  <input id="store{{ store.store_id }}" type="checkbox" name="lightsettings[store][]" value="{{ store.store_id }}" />
+									{% endif %}
+									<label class="light-checked" for="store{{ store.store_id }}"></label>&nbsp;{{ store.name }}
+								  </div>
+								{% endfor %}
+							</div>
+						</div>
+				  </div>
+				  <div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_help_seo_url_on_2 }}</div>
+				  <div class="form-group">
+						<label class="col-sm-3 control-label" for="input-zone"><br />{{ entry_seo_url }}&nbsp;<span data-toggle="tooltip" title="{{ entry_help_seo_url }}"></span></label>
+						<div class="col-sm-9">
+						  {% for language in languages %}
+							<span class="input-group" id="keyword-language-{{ language.language_id }}">
+							  <span class="input-group-addon">
+								<img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />
+							  </span>
+							  <input type="text" name="lightseo[keyword][{{ language.language_id }}]" value="{% if lightseo.name[language.language_id] %}{{ lightseo.name[language.language_id] }}{% else %}{% if language.code|split('-')[0] != 'ru' %}{{ language.code|split('-')[0] }}_{% endif %}checkout{% endif %}" placeholder="checkout" class="form-control" />
+							</span>
+						  {% endfor %}<br />
+						  {% if languages|length > 1 %}<div class="alert alert-warning"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{ text_help_seo_url_on_3 }}</div>{% endif %}
+						</div>
+				    </div>
+				</div>
+			  </div>
+			</div>
+			<div class="tab-pane" id="tab-restrictions">
+			  <div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_alert_restrictions }}</div>
+			  <div class="col-sm-12">
+				<div class="form-group">
+				  <div class="table-responsive" id="tab-restriction">
+					<table class="table table-striped table-bordered table-hover">
+					  <thead>
+						<tr>
+						  <td class="text-left">{{ entry_restriction }}</td>
+						  <td class="text-left">{{ entry_group_customer }}</td>
+						  <td class="text-left">{{ entry_restriction_value }}</td>
+						  <td class="text-left"></td>
+						</tr>
+					  </thead>
+					  <tbody>
+					  {% set restriction_row = 0 %}
+					  {% for settings_restriction in settings_restrictions %}
+					  <tr id="restriction-row{{ restriction_row }}">
+						<td class="text-left">
+						  <select name="lightrestrictions[{{ restriction_row }}][type]" class="form-control">
+						    {% for restriction in restrictions %}
+							  {% if settings_restriction.type == restriction.type %}
+							    <option value="{{ restriction.type }}" selected="selected">{{ restriction.name_type }}</option>
+							  {% else %}
+							    <option value="{{ restriction.type }}">{{ restriction.name_type }}</option>
+							  {% endif %}
+						    {% endfor %}
+						  </select>
+						</td>
+						<td class="text-left">
+						  <select name="lightrestrictions[{{ restriction_row }}][customer_group_id]" class="form-control">
+						    {% for customer_group in customer_groups %}
+							  {% if customer_group.customer_group_id == settings_restriction.customer_group_id %}
+								<option value="{{ customer_group.customer_group_id }}" selected="selected">{{ customer_group.name }}</option>
+							  {% else %}
+								<option value="{{ customer_group.customer_group_id }}">{{ customer_group.name }}</option>
+							  {% endif %}
+						    {% endfor %}
+						  </select>
+						</td>
+						<td class="text-left" id="lightrestrictions-value-row{{ restriction_row }}">
+						  <input type="text" class="form-control" name="lightrestrictions[{{ restriction_row }}][value]" value="{{ settings_restriction.value }}"  />
+						</td>
+						<td class="text-left"><button type="button" onclick="$('#restriction-row{{ restriction_row }}').remove()" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>
+					  </tr>
+					  {% set restriction_row = restriction_row + 1 %}
+					  {% endfor %}
+					  </tbody>
+					  <tfoot>
+						<tr>
+						  <td colspan="3"></td>
+						  <td class="text-left"><button type="button" onclick="addRestriction();" data-toggle="tooltip" title="{{ button_recurring_add }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button></td>
+						</tr>
+					  </tfoot>
+					</table>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			<div class="tab-pane" id="tab-template">
+			  <div class="alert alert-info">1. {{ text_alert_cart_template_start }}</div>
+			  <div class="form-group">
+				<div class="col-sm-4">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_bootstrap }} <span data-toggle="tooltip" title="{{ entry_help_bootstrap }}"></span></label>
+				  <div class="col-sm-6 text-left">
+					<div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="bootstrap" name="lightsettings[bootstrap]"{% if bootstrap %} checked=""{% endif %} data-name="bootstrap">
+					  <label for="bootstrap"></label>
+					</div>
+				  </div>
+				</div>
+				<div class="col-sm-4">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_font }} <span data-toggle="tooltip" title="{{ entry_help_font }}"></span></label>
+				  <div class="col-sm-6 text-left">
+					<div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="font" name="lightsettings[font]"{% if font %} checked=""{% endif %} data-name="font">
+					  <label for="font"></label>
+					</div>
+				  </div>
+				</div>
+				<div class="col-sm-4">
+				  <label class="col-sm-6 control-label" for="input-status">{{ entry_jquery }} <span data-toggle="tooltip" title="{{ entry_help_jquery }}"></span><br /><br /><br /></label>
+				  <div class="col-sm-6 text-left">
+					<div class="lightOnOff settings">  
+					  <input type="checkbox" value="1" id="jquery" name="lightsettings[jquery]"{% if jquery %} checked=""{% endif %} data-name="jquery">
+					  <label for="jquery"></label>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <div class="alert alert-info">2. {{ text_alert_cart_template }}</div>
+			  {{ text_help_cart_template_1 }}<br />
+			  <div class="row">
+				<div class="col-sm-12">
+			      <div class="well well-sm" style="overflow: auto;">
+				   - {{ text_help_cart_template_5 }}<br />
+			       - {{ text_help_cart_template_6 }}<br />
+				   - {{ text_help_cart_template_2 }}<br /><br />
+				   {{ text_help_cart_template_3 }}
+				  </div>
+				  {{ text_help_cart_template_4 }}<br /><br />
+				  {% for language in languages %}
+					<span class="input-group">
+					  <span class="input-group-addon">
+						<img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />
+					  </span>
+					  <input type="text" name="masterhtml[items][{{ language.language_id }}]" value='{% if htmls.items[language.language_id] %}{{ htmls.items[language.language_id] }}{% else %}{% if text_items_placeholder[language.language_id] %}{{ text_items_placeholder[language.language_id] }}{% endif %}{% endif %}' placeholder='{% if htmls.items[language.language_id] %}{{ htmls.items[language.language_id] }}{% else %}{% if text_items_placeholder[language.language_id] %}{{ text_items_placeholder[language.language_id] }}{% endif %}{% endif %}' class="form-control" />
+					</span>
+				  {% endfor %}<br />
+				  <div class="alert alert-danger">{{ text_help_cart_template_7 }}</div>
+			    </div>
+			  </div><br />
+			  <div class="alert alert-info">3. {{ text_alert_cart_js_template }}</div>
+			  {{ text_alert_cart_js_template_1 }}<br />
+			  <div class="well well-sm" style="overflow: auto;">
+			  &lt;script&gt;
+			   <textarea name="masterhtml[js][0]" class="form-control">{% if htmls_js %}{{ htmls_js }}{% endif %}</textarea>
+			   &lt;/script&gt;
+			  </div>
+			  <div class="alert alert-danger">{{ text_help_cart_template_8 }}</div><br />
+			  <div class="alert alert-info">4. {{ text_alert_cart_css_template }}</div>
+			  {{ text_alert_cart_js_template_2 }}<br />
+			  <div class="well well-sm" style="overflow: auto;">
+			  &lt;style&gt;			  
+			   <textarea name="masterhtml[css][0]" class="form-control">{% if htmls_css %}{{ htmls_css }}{% endif %}</textarea>
+			  &lt;/style&gt;
+			  </div><br />			  
+			</div>
+			<div class="tab-pane" id="tab-payment">
+			  <div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_alert_payment }}</div>
+			  <div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_alert_payment_status }}</div>
+			  <div class="form-group">
+				<label class="col-sm-2 control-label" for="input-status">{{ entry_payment_status }} <span data-toggle="tooltip" title="{{ entry_help_payment_status }}"></span></label>
+				<div class="col-sm-10 text-left">
+				  <select name="lightsettings[payment_status]" id="input-payment-status" class="form-control">
+					{% for order_status in order_statuses %}
+					{% if order_status.order_status_id == payment_status %}
+					<option value="{{ order_status.order_status_id }}" selected="selected">{{ order_status.name }}</option>
+					{% else %}
+					<option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
+					{% endif %}
+					{% endfor %}
+				  </select>
+				</div>
+			  </div>
+			</div>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal-bg"></div>
+<script>
+$('#languagetop a:first').tab('show');
+$('#languagebottom a:first').tab('show');
+function lightrequestpost(){
+	$.ajax({
+		url: 'index.php?route=extension/module/lightcheckout/lightrequestpost&user_token={{ user_token }}',
+		type: 'post',
+		data: $('#form-module select, #form-module input[type=\'checkbox\']:checked, #form-module input[type=\'hidden\'], #form-module input[type=\'text\'], #form-module textarea'),
+		dataType: 'json',
+		beforeSend: function() {},
+		complete: function() {
+			$('.alert-success').fadeIn(1000).delay(5000).fadeOut(1000);
+		},
+		success: function(json){
+			$('.alert-success, .alert-danger, #content > .container-fluid > .alert-warning, .text-danger').remove();
+			$('.has-error').removeClass('has-error');
+			var html = '';
+			if (json['success']) {
+				html += '<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + '<button data-dismiss="alert" class="close" type="button">×</button></div>';
+			}
+			if (json['warning']) {
+				html += '<div class="alert alert-danger alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['warning'] + '<button data-dismiss="alert" class="close" type="button">×</button></div>';
+			}
+			if (json['warning_store']) {
+				$('#seo_store').after('<div class="text-danger"><i class="fa fa-check-circle"></i> ' + json['warning_store'] + '<button data-dismiss="alert" class="close" type="button">×</button></div>');
+				$('a[href^=#tab-seo-url]').trigger('click');
+			}
+			if (json['warning_keyword']) {
+				for (var key in json['warning_keyword']) {
+					$('#keyword-language-' + key).after('<div class="text-danger">' + json['warning_keyword'][key] + '</div>');
+					$('#keyword-language-' + key).addClass('has-error');
+				}
+				$('a[href^=#tab-seo-url]').trigger('click');
+				
+			}
+			if (!json['warning']){
+				if (json['debugging']) {
+					html += '<div class="alert alert-warning alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['debugging'] + '<button data-dismiss="alert" class="close" type="button">×</button></div>';
+					
+					$('a[href^=#tab-settings]').trigger('click');
+				}
+			}
+			
+			if (json['warning']){
+				if (json['rows_error']) {
+					for (var item of json['rows_error']) {
+						$('#restriction-row' + item).addClass('has-error');
+					}
+					$('a[href^=#tab-restrictions]').trigger('click');
+				}
+				if (json['rows_empty_max']) {
+					for (var item of json['rows_empty_max']) {
+						$('#lightrestrictions-value-row' + item).addClass('has-error');
+					}
+					$('a[href^=#tab-restrictions]').trigger('click');
+				}
+			}
+			
+			$('#content > .container-fluid').prepend(html);
+		},
+		error: function(xhr, ajaxOptions, thrownError){
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+$("#light-left-design").slider({
+	tooltip: 'always',
+	formatter: function(value) {
+		$('#light-left').parent().attr('class','col-sm-' + value);
+		$('#light-right').parent().attr('class','col-sm-' + parseInt(12 - value));
+		value = value - 1; 
+		if (value < 0){value = 0;}
+		allHeightBlock(value, 'left');
+	},
+});
+$("#light-right-design").slider({
+	tooltip: 'always',
+	formatter: function(value) {
+		$('#light-right-1').attr('class','col-sm-' + value);
+		$('#light-right-2').attr('class','col-sm-' + parseInt(12 - value));
+		
+		if (value == 2 || value == 1) {value = parseInt(value - 1);}
+		if (value < 0){value = 0;}
+		if (value == 11 || value == 10) {value = 1;}
+		
+		allHeightBlock(value, 'right');
+	},
+});
+function allHeightBlock(value, id) {
+	/*if ($(window).width() < 767) {*/
+		$('#light-' + id + ' .cursor-move > div > .input-group-addon').each(function() {
+			
+			var width_div = $(this).outerWidth();
+			var width_parent = $(this).parent().outerWidth();
+			
+			if (width_div > width_parent) {
+				$(this).find('strong').css('display', 'none');
+				$(this).parent().addClass('classheight');
+				$(this).parent().find('.input-group .form-control').before($(this).parent().find('.input-group .input-group-addon'));
+				if (value == 1 || value == 0){
+					$(this).parent().find('.input-group .form-control').hide();
+					if (value == 0){$(this).find('.lightOnOff').css('width', 'auto');}
+					if (value == 1){$(this).find('.lightOnOff').removeAttr('style');}
+				} else {
+					$(this).find('.lightOnOff').removeAttr('style');
+				}
+			} else {
+				$(this).find('strong').removeAttr('style');
+				$(this).parent().removeClass('classheight');
+				$(this).parent().find('.input-group .form-control').after($(this).parent().find('.input-group .input-group-addon'));
+				$(this).parent().find('.input-group .form-control').removeAttr('style');
+			}
+		});
+	/*}*/
+}
+var adjustment;
+$("ol.light-left").sortable({
+  group: 'light-left',
+  pullPlaceholder: true,
+  // animation on drop
+  onDrop: function  ($item, container, _super) {
+    var $clonedItem = $('<li/>').css({height: 0});
+    $item.before($clonedItem);
+    $clonedItem.animate({'height': $item.height()});
+    $item.animate($clonedItem.position(), function  () {
+      $clonedItem.detach();
+      _super($item, container);
+    });
+	
+	var group_id = $item.parent().attr('data-group-id');
+	var name_group = $item.find('input[name^=\'light_checkout[sort]\']').attr('data-name');
+	$item.find('input[name^=\'light_checkout[sort]\']').attr('name', 'light_checkout[sort][' + group_id + '][' + name_group +']');
+	
+	$('.light-left').each(function(){
+		var id = 0;
+		$(this).find('li.cursor-move').each(function(id){
+			id = id + 1;
+			$(this).find('input[name^=\'light_checkout[sort]\']').attr('value', id);
+		});
+	});
+	
+  },
+
+  // set $item relative to cursor position
+  onDragStart: function ($item, container, _super) {
+    var offset = $item.offset(),
+        pointer = container.rootGroup.pointer;
+
+    adjustment = {
+      left: pointer.left - offset.left,
+      top: pointer.top - offset.top
+    };
+
+    _super($item, container);
+  },
+  onDrag: function ($item, position) {
+    $item.css({
+      left: position.left - adjustment.left,
+      top: position.top - adjustment.top
+    });
+  }
+});
+function centering(diving){
+	var wsize = windowWorkSize(),
+	testElem = $(diving),
+	testElemWid =  testElem.outerWidth(),
+	testElemHei =  testElem.outerHeight();
+	
+	var top = wsize[1]/2 - testElemHei/2 + (document.body.scrollTop || document.documentElement.scrollTop);
+	
+	if (top < 80) {
+		top = 80;
+	}
+			
+	testElem.css('top', top + 'px');
+
+	function windowWorkSize(){
+	var wwSize = new Array();
+		if (window.innerHeight !== undefined) {wwSize= [window.innerWidth,window.innerHeight]} else {
+			wwSizeIE = (document.body.clientWidth) ? document.body : document.documentElement; 
+			wwSize= [wwSizeIE.clientWidth, wwSizeIE.clientHeight];
+		};
+		return wwSize;
+	};
+}
+function CheckedFields(id) {	
+	var htm = '<div class="text-right"><button class="btn btn-primary" title="" data-toggle="tooltip" data-original-title="Сохранить" onClick="SaveCheckedFieldsLogin();"><i class="fa fa-save"></i></button>&nbsp;&nbsp;<button class="btn btn-default" title="" data-toggle="tooltip" title="Отмена" onClick="DeleteCheckedFields(\'#' + id + '\');"><i class="fa fa-reply"></i></button></div>';
+	
+	$('body').prepend('<div class="divshadow"></div>');
+	$('#light-' + id.replace('checked_', '')).addClass('load');
+	
+	setTimeout(function(){
+		$.ajax({
+			url: 'index.php?route=extension/module/lightcheckout/getfields&user_token={{ user_token }}&id=' + id,
+			type: 'post',
+			data: $('.divshadow #' + id + ' input[type=\'text\'], .divshadow #' + id + ' input[type=\'checkbox\']:checked'),
+			dataType: 'html',
+			beforeSend: function() {
+				$('.modal-bg').addClass("show");
+			},
+			complete: function() {
+				$('body > .divshadow').prepend(htm);
+				centering('.divshadow');
+				$('body > .divshadow').addClass('show col-lg-offset-2 col-lg-8 col-sm-offset-3 col-sm-6 col-xs-offset-1 col-xs-10 animated bounceIn');
+				$('#light-' + id.replace('checked_', '')).removeClass('load');
+			},
+			success: function(html) {
+				$('body > .divshadow').prepend(html);
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	}, 1000);
+	
+	$('[data-toggle=\'tooltip\']').tooltip({container: 'body', html: true});
+}
+$('input[name^=\'light_checkout[status]\']').each(function(){
+	if ($(this).is(':checked')) {
+		$('#' + $(this).attr('data-name')).removeClass('opacity');
+	} else {
+		$('#' + $(this).attr('data-name')).addClass('opacity');
+	}
+});
+$('input[name^=\'light_checkout[status]\']').change(function(){
+	if ($(this).is(':checked')) {
+		$('#' + $(this).attr('data-name')).removeClass('opacity');
+	} else {
+		$('#' + $(this).attr('data-name')).addClass('opacity');
+	}
+});
+$('select#input-country').on('change', function(){
+	$.ajax({
+		url: 'index.php?route=extension/module/lightcheckout/country&country_id=' + this.value + '&user_token={{ user_token }}',
+		dataType: 'json',
+		beforeSend: function() {
+			$('select#input-country').prop('disabled', true);
+		},
+		complete: function() {
+			$('select#input-country').prop('disabled', false);
+		},
+		success: function(json) {
+			
+			html = '<option value="">{{ text_select }}</option>';
+
+			if (json['zone'] && json['zone'] != '') {
+				for (i = 0; i < json['zone'].length; i++) {
+					html += '<option value="' + json['zone'][i]['zone_id'] + '"';
+
+					if (json['zone'][i]['zone_id'] == '{{ zone_id }}') {
+						html += ' selected="selected"';
+					}
+
+					html += '>' + json['zone'][i]['name'] + '</option>';
+				}
+			} else {
+				html += '<option value="0" selected="selected">{{ text_none }}</option>';
+			}
+
+			$('select#input-zone').html(html);
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+});
+$('i[onClick="CheckedFields(\'checked_confirm\');"]').parent().remove();
+
+var restriction_row = {{ restriction_row }};
+function addRestriction() {
+	html  = '<tr id="restriction-row' + restriction_row + '">';
+	html += '  <td class="left">';
+	html += '    <select name="lightrestrictions[' + restriction_row + '][type]" class="form-control">>';
+	{% for restriction in restrictions %}
+	html += '      <option value="{{ restriction.type }}">{{ restriction.name_type }}</option>';
+	{% endfor %}
+	html += '    </select>';
+	html += '  </td>';
+	html += '  <td class="left">';
+	html += '    <select name="lightrestrictions[' + restriction_row + '][customer_group_id]" class="form-control">>';
+	{% for customer_group in customer_groups %}
+	html += '      <option value="{{ customer_group.customer_group_id }}">{{ customer_group.name }}</option>';
+	{% endfor %}
+	html += '    <select>';
+	html += '  </td>';
+	html += '  <td class="left" id="lightrestrictions-value-row' + restriction_row + '">';
+	html += '    <input type="text" class="form-control" name="lightrestrictions[' + restriction_row + '][value]" value="0" />';
+	html += '  </td>';
+	html += '  <td class="left">';
+	html += '    <a onclick="$(\'#restriction-row' + restriction_row + '\').remove()" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></a>';
+	html += '  </td>';
+	html += '</tr>';
+
+	$('#tab-restriction table tbody').append(html);
+
+	restriction_row++;
+}
+</script>
+{% endif %}
+{% if id %}
+<div id="{{ id }}">
+	<div class="text-center"><i class="fa fa-user"></i> {{ name_id }}</div>
+	{% if id == 'checked_alogin' %}
+		<div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ tooltip_register }}</div>
+		<div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ tooltip_guest }}</div>
+	{% endif %}
+	{% if id == 'checked_payment_address' %}
+		<div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_checked_payment_address_1 }}</div>
+		<div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_checked_payment_address_2 }}</div>
+	{% endif %}
+	{% if id == 'checked_cart' %}
+		<div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_checked_cart }}</div>
+		<div class="alert alert-info"><i class="fa fa-info" aria-hidden="true"></i> {{ text_checked_cart_dop }}</div>
+	{% endif %}	
+	<div class="checked-fields">
+	  <table class="table table-bordered table-hover">
+		{% if id != 'checked_cart' %}
+		<thead>
+		  <tr>
+			<td>{{ text_name_porpose }}</td>
+			<td class="text-center">{{ text_show }}</td>
+			<td class="text-center">{{ text_required }}</td>
+			<td>{{ text_name_fields }}&nbsp;<span data-toggle="tooltip" title="{{ tooltip_rename_help }}"></span></td>
+			{% if id != 'checked_payment_method' and id != 'checked_shipping_method' %}
+			  <td>{{ text_placeholder_fields }}&nbsp;<span data-toggle="tooltip" title="{{ tooltip_rename_help }}"></span></td>
+			  <td>{{ text_sort }}</td>
+			{% endif %}
+		  </tr>
+		</thead>
+		<tbody>
+		{% for name,group in groups %}
+		  <tr{{ group.class_name }}{% if register_show and status.alogin %}{% if group.group_name_id == 'payment_address' %}{% if name == 'firstname' or name == 'lastname' or name == 'phone' or name == 'email' %} class="light-hide"{% endif %}{% endif %}{% endif %}{% if name == 'register' %} class="register"{% endif %}{% if name == 'guest' %} class="guest"{% endif %}>
+			<td{% if group.class_name %} class="text-right"{% endif %}>
+			  {{ group.text_name_porpose }}&nbsp;{% if name == 'custom' or name == 'guest_custom' or name == 'custom_account' or name == 'shipping_custom' %}(<span data-toggle="tooltip" title="{{ help_text_custom }}"></span>){% endif %} 
+			  {% if group.tooltip %}&nbsp;<span data-toggle="tooltip" title="{{ group.tooltip }}"></span>{% endif %}
+			  {% if name == 'register' or name == 'guest' %}<br /><a onClick="Checked{{ name }}();" alt="" title="" class="text_checked_fields">{{ text_checked_fields }}</a>{% endif %}
+			  {% if name == 'register' %}&nbsp;<span data-toggle="tooltip" title="{{ tooltip_register }}"></span>{% endif %}
+			  {% if name == 'guest' %}&nbsp;<span data-toggle="tooltip" title="{{ tooltip_guest }}"></span>{% endif %}
+			  {% if name == 'payment_method' %}&nbsp;<span data-toggle="tooltip" title="{{ tooltip_payment_methods }}"></span><br /><a href="{{ href_payment_method }}" target="_blank"><strong>{{ text_checked_payment_method }}</strong></a>{% endif %}
+			  {% if name == 'shipping_method' %}&nbsp;<span data-toggle="tooltip" title="{{ tooltip_shipping_methods }}"></span><br /><a href="{{ href_shipping_method }}" target="_blank"><strong>{{ text_checked_shipping_method }}</strong></a>{% endif %}
+			</td>
+			<td class="text-center">
+			{% if not group.payment_method and not group.shipping_method and group.name_id != 'payment_method' and group.name_id != 'shipping_method' %}
+			  <input id="group-{{ name }}-show" type="checkbox" name="{{ id }}[{{ group.group_name_id }}][{{ name }}][show]" value="1"{% if group.show %} checked="checked"{% endif %}>
+			  <label class="light-checked" for="group-{{ name }}-show"></label>
+			  {% if name == 'custom' or name == 'custom_account' %}&nbsp;<span data-toggle="tooltip" title="{{ help_show_custom_account }}"></span>{% endif %}
+			  {% if name == 'guest_custom' or name == 'shipping_custom' %}&nbsp;<span data-toggle="tooltip" title="{{ help_show_custom }}"></span>{% endif %}
+			  {% if name == 'payment_agree' %}&nbsp;<span data-toggle="tooltip" title="{{ text_help_payment_agree }}"></span>{% endif %}
+			{% endif %}
+			</td>
+			<td class="text-center">
+			{% if not group.payment_method and not group.shipping_method and group.name_id != 'payment_method' and group.name_id != 'shipping_method' %}
+			  {% if group.test_required %}
+				<input id="group-{{ name }}-required" type="checkbox" name="{{ id }}[{{ group.group_name_id }}][{{ name }}][required]" value="1"{% if group.required %} checked="checked"{% endif %}>
+			    <label class="light-checked" for="group-{{ name }}-required"></label>
+				{% if name == 'postcode' or name == 'guest_postcode' %}&nbsp;<span data-toggle="tooltip" title="{{ help_postcode }}"></span>{% endif %}
+			  {% else %}-{% if name == 'custom' or name == 'guest_custom' or name == 'shipping_custom' %}&nbsp;<span data-toggle="tooltip" title="{{ help_custom }}"></span>{% endif %}{% endif %}{% if name == 'batches_address' %}&nbsp;<span data-toggle="tooltip" title="{{ text_help_batches_address }}"></span>{% endif %}</td>
+			{% endif %}
+			<td class="text-center">
+			{% if group.name_id != 'payment_agree' %}
+			  {% for language in languages %}
+				<span class="input-group">
+				  <span class="input-group-addon">
+					<img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />
+				  </span>
+				  <input type="text" name="{{ id }}[{{ group.group_name_id }}][{{ name }}][name][{{ language.language_id }}]" value="{{ group.name[language.language_id] }}" placeholder="{% if group.group_name_id == 'alogged' %}{{ text_placeholder_alogged }}{% elseif group.placeholder[language.language_id] %}{{ group.placeholder[language.language_id] }}{% else %}{{ group.text_placeholder_porpose }}{% endif %}" class="form-control" />
+				</span>
+			  {% endfor %}
+			{% else %}<br /><br /><br /><input type="hidden" name="{{ id }}[{{ group.group_name_id }}][{{ name }}][name][{{ language.language_id }}]" value="{{ group.name[language.language_id] }}" placeholder="{% if group.group_name_id == 'alogged' %}{{ text_placeholder_alogged }}{% elseif group.placeholder[language.language_id] %}{{ group.placeholder[language.language_id] }}{% else %}{{ group.text_placeholder_porpose }}{% endif %}" class="form-control" />{% endif %}
+			</td>
+			{% if id != 'checked_payment_method' and id != 'checked_shipping_method' %}
+			  <td class="text-center">
+				{% if not group.payment_method and not group.shipping_method %}
+				{% if group.test_required %}
+				  {% for language in languages %}
+					<span class="input-group">
+					  <span class="input-group-addon">
+						<img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.name }}" />
+					  </span>
+					  <input type="text" name="{{ id }}[{{ group.group_name_id }}][{{ name }}][placeholder][{{ language.language_id }}]" value="{{ group.placeholder[language.language_id] }}" placeholder="{% if group.text_placeholder_porpose %}{{ group.text_placeholder_porpose }}{% else %}{{ group.placeholder[language.language_id] }}{% endif %}" class="form-control" />
+					</span>
+				  {% endfor %}
+				{% else %}-{% endif %}
+				{% endif %}
+			  </td>
+			  <td class="text-center">
+				{% if not group.payment_method and not group.shipping_method %}
+				  {% if group.test_required_sort %}
+					<input type="text" name="{{ id }}[{{ group.group_name_id }}][{{ name }}][sort]" value="{{ group.sort }}" placeholder="" class="form-control one-input" />
+				  {% else %}
+				  - <input type="hidden" name="{{ id }}[{{ group.group_name_id }}][{{ name }}][sort]" value="{{ group.sort }}" placeholder="" class="form-control one-input" />
+				  {% endif %}
+				{% endif %}
+			  </td>
+			{% endif %}
+		  </tr>
+		{% endfor %}
+		</tbody>
+		{% else %}
+		<tbody class="form-horizontal">
+		  <tr>
+			<td>
+			  <div class="col-sm-4">
+			    <div class="form-group">
+				  <label class="col-sm-5 control-label" for="input-zone">{{ entry_coupon }}&nbsp;<span data-toggle="tooltip" title="{{ entry_help_coupon }}"></span></label>
+				  <div class="col-sm-7">
+					<div class="lightOnOff settings">
+					  <input type="checkbox" value="1" id="coupon" name="lightcart[coupon]"{% if coupon %} checked=""{% endif %} data-name="coupon">
+					  <label for="coupon"></label>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <div class="col-sm-4">
+			    <div class="form-group">
+				  <label class="col-sm-7 control-label" for="input-zone">{{ entry_reward }}&nbsp;<span data-toggle="tooltip" title="{{ entry_help_reward }}"></span></label>
+				  <div class="col-sm-5">
+					<div class="lightOnOff settings">
+					  <input type="checkbox" value="1" id="reward" name="lightcart[reward]"{% if reward %} checked=""{% endif %} data-name="reward">
+					  <label for="reward"></label>
+					</div>
+				  </div>
+				</div>
+			   </div>
+			  <div class="col-sm-4">
+			    <div class="form-group">
+				  <label class="col-sm-7 control-label" for="input-zone">{{ entry_voucher }}&nbsp;<span data-toggle="tooltip" title="{{ entry_help_voucher }}"></span></label>
+				  <div class="col-sm-5">
+					<div class="lightOnOff settings">
+					  <input type="checkbox" value="1" id="voucher" name="lightcart[voucher]"{% if voucher %} checked=""{% endif %} data-name="voucher">
+					  <label for="voucher"></label>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <input type="hidden" value="1" name="lightcart[test]" />
+			</td>
+		  </tr>
+		</tbody>
+		{% endif %}
+	  </table>
+	</div>
+</div>
+<script><!--
+function DeleteCheckedFields() {
+	$('body .divshadow').removeClass('animated').removeClass('bounceIn').addClass('animated bounceOut');
+	setTimeout(function() {
+		$('.divshadow').remove();
+	},700);
+	setTimeout(function() {
+		$('.modal-bg').removeClass("show");
+	}, 1000);
+}
+function SaveCheckedFieldsLogin() {
+	$.ajax({
+		url: 'index.php?route=extension/module/lightcheckout/addfields&user_token={{ user_token }}',
+		type: 'post',
+		data: $('.divshadow #{{ id }} input[type=\'text\'], .divshadow #{{ id }} input[type=\'checkbox\']:checked, .divshadow #{{ id }} input[type=\'hidden\']'),
+		dataType: 'json',
+		beforeSend: function(){},
+        complete: function(){},
+		success: function(json) {
+		  $('.divshadow .alert-success, .divshadow .alert-danger').remove();
+		  if (json['success']) {
+			$('.checked-fields').before('<div class="alert alert-success" style="display: none;">' + json['success'] + '</div>');
+			$('.divshadow .alert-success').fadeIn(500).delay(10000).fadeOut(1000);
+		  }
+		  if (json['warning']) {
+			$('.checked-fields').before('<div class="alert alert-danger" style="display: none;">' + json['warning'] + '</div>');
+			$('.divshadow .alert-danger').fadeIn(500).delay(10000).fadeOut(1000);
+		  }
+		  if (json['error']) {
+			  if (json['error']['register']) {
+				$('.checked-fields').before('<div class="alert alert-warning alert-register" style="display: none;">' + json['error']['register'] + '</div>');
+				setTimeout(function(){
+					$('.alert-register').fadeIn(500).delay(5000).fadeOut(1000);
+				}, 500);
+				setTimeout(function(){
+					if ($('input[name=\'checked_alogin[register][show]\']').is(':checked')) {
+						$('input[name=\'checked_alogin[register][show]\']').trigger('click');
+					}
+				}, 5000);
+			  }
+			  var time_out_1 = 500; var time_out_2 = 5000;
+			  if (json['error']['register']) {time_out_1 = 2500; time_out_2 = 7000;}
+			  if (json['error']['guest']) {
+				$('.checked-fields').before('<div class="alert alert-warning alert-guest" style="display: none;">' + json['error']['guest'] + '</div>');
+				setTimeout(function(){
+					$('.alert-guest').fadeIn(500).delay(5000).fadeOut(1000);
+				}, time_out_1);
+				setTimeout(function(){
+					if ($('input[name=\'checked_alogin[guest][show]\']').is(':checked')) {
+						$('input[name=\'checked_alogin[guest][show]\']').trigger('click');
+					}
+				}, time_out_2);
+			  }
+		  }			  
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});
+}
+$('tr.tr-register').hide(0);
+$('tr.tr-guest').hide(0);
+function Checkedregister() {
+	$('tr.tr-register').slideToggle(700);
+}
+function Checkedguest() {
+	$('tr.tr-guest').slideToggle(700);
+}
+$('input[name=\'checked_alogin[register][register][show]\']').change(function(){
+	if ($(this).is(':checked')) {
+		$('tr.tr-register').show(700);
+	} else {
+		$('tr.tr-register').hide(700);
+	}
+});
+$('input[name=\'checked_alogin[guest][guest][show]\']').change(function(){
+	if ($(this).is(':checked')) {
+		$('tr.tr-guest').show(700);
+	} else {
+		$('tr.tr-guest').hide(700);
+	}
+});
+
+$('tr.tr-register').wrapAll('<span class="tr-register"></span>')
+$('tr.register').after($('span.tr-register'));
+$('tr.tr-register').unwrap();
+
+$('tr.tr-guest').wrapAll('<span class="tr-guest"></span>')
+$('tr.guest').after($('span.tr-guest'));
+$('tr.tr-guest').unwrap();
+
+$('tr.tr-methods').wrapAll('<span class="tr-payment-methods"></span>')
+$('.tr-h4-methods').after($('.tr-payment-methods'));
+$('tr.tr-methods').unwrap();
+//--></script>
+{% endif %}
+{{ footer }}

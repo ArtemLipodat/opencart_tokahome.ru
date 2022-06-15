@@ -1,0 +1,43 @@
+{{ header }}
+<div class="catalog-page" style="min-height: 100vh">
+  <div class="catalog-page-header">
+    <h2>{{ heading_title }}</h2>
+    <a href="{{ breadcrumbs[0].href }}">Назад</a>
+  </div>
+  <div class="catalog-sort">
+    <label class="input-group-addon" for="input-sort">{{ text_sort }}</label>
+    <select id="input-sort" class="form-control" onchange="location = this.value;">
+      {% for sorts in sorts %}
+        {% if sorts.value == '%s-%s'|format(sort, order) %}
+          <option value="{{ sorts.href }}" selected="selected">{{ sorts.text }}</option>
+        {% else %}
+          <option value="{{ sorts.href }}">{{ sorts.text }}</option>
+        {% endif %}
+      {% endfor %}
+    </select>
+  </div>
+  <div class="catalog-page-item">
+    {% for product in products %}
+    <div class="catalog-page-item-list">
+      <a href="{{ product.href }}"><img class="photo_catalog" src="{{ product.thumb }}" alt=""></a>
+      <div class="catalog-page-item-list-thumb">
+        {% for image in product.images %}
+          {% if loop.index < 4  %}
+          {{ break }}
+        <a class="thum-img-category" href=""><img src="{{ image.thumb }}" alt=""></a>
+          {% endif %}
+        {% endfor %}
+        <a href="" class="price">{{ product.price }}</a>
+        {% if product.special %}
+        <a href="" class="seel_price">{{ product.special }}</a>
+        {% endif %}
+      </div>
+      <a href="{{ product.href }}" class="desc">
+        <span>{{ product.name }}</span>
+        <span>{{ product.description }}</span>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{{ footer }}

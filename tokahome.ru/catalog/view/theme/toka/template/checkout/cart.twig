@@ -1,0 +1,72 @@
+{{ header }}
+<div class="shopping-cart" style="min-height: 100vh">
+  <div class="shopping-cart-header">
+    <h2>КОРЗИНА: <span>{% if products|length == 1 %}{{ products|length }} товар {% endif %} {% if products|length > 1 %}{{ products|length }} товара {% endif %}</span> </h2>
+    <a href="{{ back }}">Назад</a>
+  </div>
+  {% for product in products %}
+  <form action="{{ action }}" method="post" enctype="multipart/form-data">
+  <div class="shopping-cart-item">
+    <svg onclick="remove({{ product.cart_id }})" class="remove" width="30" height="30" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 2.22336L14.6 0.823364L8 7.42336L1.4 0.823364L0 2.22336L6.6 8.82336L0 15.4234L1.4 16.8234L8 10.2234L14.6 16.8234L16 15.4234L9.4 8.82336L16 2.22336Z" fill="#C4C4C4"/>
+    </svg>
+    <div class="shopping-cart-item-img">
+      <img style="width: 245px; height: 160px" src="{{ product.thumb }}" alt="">
+    </div>
+    <div class="shopping-cart-item-name">
+      <a style="color: #0D0D0D" href="{{ product.href }}">{{ product.name }}</a>
+    </div>
+    <div class="shopping-cart-item-change">
+      <button type="button" onclick="javascript: document.getElementById('change_{{ product.cart_id }}').value--; $('#update_{{ product.cart_id }}').trigger('click')" id="minus_{{ product.cart_id }}">-</button>
+      <input type="text" name="quantity[{{ product.cart_id }}]" id="change_{{ product.cart_id }}" readonly  value="{{ product.quantity }}" size="1" min="1"/>
+      <button type="button" onclick="javascript: document.getElementById('change_{{ product.cart_id }}').value++;  $('#update_{{ product.cart_id }}').trigger('click') " id="plus_{{ product.cart_id }}">+</button>
+      <button style="margin-left: 20px; background-color: #7a7575 !important; display: none;" id="update_{{ product.cart_id }}" type="submit" data-toggle="tooltip" title="{{ button_update }}" class="btn btn-primary"><svg style="width: 20px" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg></button>
+    </div>
+    <div class="shopping-cart-item-price">
+      <span>{{ product.total }}</span>
+{#      <span>9000 ₽</span>#}
+    </div>
+  </div>
+  </form>
+  {% endfor %}
+  <div class="total">
+    <div class="total-price">ИТОГО: <span>{{ totals[0].text }}</span></div>
+    <div class="total-button">
+      <a href="{{ checkout }}">ОФОРМИТЬ ЗАКАЗ</a>
+    </div>
+  </div>
+</div>
+{{ footer }}
+
+<script>
+  function minus(id) {
+    let minus = document.getElementById("minus_" + id);
+    let change = document.getElementById('change_' + id);
+    minus.onclick = function() {
+      count = Number(change.value) - 1 > 0 ? Number(change.value) - 1 : 1;
+      if (count < 10){
+        change.style.width = '50px';
+      }
+      change.value = count;
+      $('#update').trigger('click')
+    }
+  }
+
+  function plus(id) {
+    let plus = document.getElementById("plus_" + id);
+    let change = document.getElementById('change_' + id);
+    plus.onclick = function() {
+      if (Number(change.value) > 8){
+        change.style.width = '70px';
+      }
+      if (Number(change.value) > 98){
+        change.style.width = '90px';
+      }
+      change.value = Number(change.value) + 1;
+      $('#update').trigger('click')
+    };
+  }
+
+</script>

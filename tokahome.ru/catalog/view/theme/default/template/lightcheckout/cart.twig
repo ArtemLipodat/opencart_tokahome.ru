@@ -1,0 +1,271 @@
+{% if not updatecart %}
+<div id="checkout-cart" class="container">
+  {% if attention %}
+  <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ attention }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+  {% if success %}
+  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="row">
+{% endif %}
+      <div id="light-cart"><div class="panel panel-default">
+		{% if error_close %}<div class="alert alert-danger alert-summa"><i class="fa fa-check-circle"></i> {{ error_close }}<button data-dismiss="alert" class="close" type="button">×</button></div>{% endif %}
+		{% if error_warning %}
+		  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		  </div>
+		{% endif %}
+		<div class="panel-heading">
+			<h4 class="panel-title"><a class="accordion-toggle" data-parent="#accordion">{{ heading_title_cart }}{% if weight %}&nbsp;({{ weight }}){% endif %}</a></h4>
+		</div>		
+        <div class="table-responsive panel-collapse">
+		  <div class="panel-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <td class="text-center hidden-xs">{{ column_image }}</td>
+                <td class="text-left">{{ column_name }}</td>
+                <td class="text-center">{{ column_quantity }}</td>
+                <td class="text-right">{{ column_price }}</td>
+                <td class="text-right">{{ column_total }}</td>
+              </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+            <tr>
+              <td class="text-center hidden-xs">{% if product.thumb %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail" /></a> {% endif %}</td>
+              <td class="text-left">{% if not product.stock %}<span class="text-danger">***</span> {% endif %} <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" class="img-thumbnail visible-xs" />{{ product.name }}</a>
+			  <br /><span class="light-gray">{{ column_model }}: {{ product.model }}</span>
+                {% if product.option %}
+                {% for option in product.option %} <br />
+                <small>{{ option.name }}: {{ option.value }}</small> {% endfor %}
+                {% endif %}
+                {% if product.reward %} <br />
+                <small>{{ product.reward }}</small> {% endif %}
+                {% if product.recurring %} <br />
+                <span class="label label-info">{{ text_recurring_item }}</span> <small>{{ product.recurring }}</small> {% endif %}</td>
+              <td class="text-center">
+			    <div class="input-group btn-block light-qty" style="max-width: 200px;">
+				  {% if qty %}
+					<span class="input-group-btn">
+					  <button type="submit" title="{{ button_update }}" class="btn btn-light light-minus"><i class="fa fa-minus"></i></button>
+					</span>
+				  {% endif %}
+				  <input type="text" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" size="1" class="form-control" id="light-qty"{% if not qty %} disabled="disabled"{% endif %} />
+				  <span class="input-group-btn">
+					  {% if qty %}
+					    <button type="submit" title="{{ button_update }}" class="btn btn-light light-plus"><i class="fa fa-plus"></i></button>
+					  {% endif %}
+					  <button type="button" title="{{ button_remove }}" class="btn btn-danger" onclick="LightCartRemove('{{ product.cart_id }}');"><i class="fa fa-times-circle"></i> <span class="visible-xs-inline-block">{{ button_remove }}</span></button>
+				  </span>
+				</div></td>
+              <td class="text-right">{{ product.price }}</td>
+              <td class="text-right">{{ product.total }}</td>
+            </tr>
+            {% endfor %}
+            {% for voucher in vouchers %}
+            <tr>
+              <td></td>
+              <td class="text-left">{{ voucher.description }}</td>
+              <td class="text-left"></td>
+              <td class="text-left"><div class="input-group btn-block" style="max-width: 200px;">
+                  <input type="text" name="" value="1" size="1" disabled="disabled" class="form-control" />
+                  <span class="input-group-btn">
+                  <button type="button" title="{{ button_remove }}" class="btn btn-danger" onclick="voucher.remove('{{ voucher.key }}');"><i class="fa fa-times-circle"></i></button>
+                  </span></div></td>
+              <td class="text-right">{{ voucher.amount }}</td>
+              <td class="text-right">{{ voucher.amount }}</td>
+            </tr>
+            {% endfor %}
+			{% for total in totals_cart %}
+            <tr>
+              <td colspan="4" class="text-right light-colspan"><strong>{{ total.title }}:</strong></td>
+              <td class="text-right">{{ total.text }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+		  </div>
+        </div>
+        <div class="row">
+		  <div class="col-sm-12">
+			<div class="panel-group light-module-total{% if modules_cart %} col-sm-7{% else %} col-sm-12{% endif %}" id="accordion">
+		      {% for module in modules %}
+				  {{ module }}
+              {% endfor %}
+			</div>
+			{% if modules_cart %}
+				<div class="col-sm-5{% if not modules %} col-sm-offset-7{% endif %}">
+				  <table class="table">
+					  {% for key,module in modules_cart %}
+						{% if key == 'coupon' %}
+						  <tr>
+							<td class="input-group light-td"><input type="text" name="coupon" value="{{ coupon }}" placeholder="{{ entry_lightcoupon }}" id="input-coupon" class="form-control" />
+							<span class="input-group-btn">
+								<input type="button" value="{{ entry_lightapply }}" id="button-coupon" data-loading-text="{{ text_loading }}"  class="btn btn-primary" />
+							</span></td>
+						  </tr>
+						{% endif %}
+						{% if key == 'voucher' %}
+						  <tr>
+							<td class="input-group light-td"><input type="text" name="voucher" value="{{ voucher }}" placeholder="{{ entry_lightvoucher }}" id="input-voucher" class="form-control" />
+							<span class="input-group-btn">
+							  <input type="submit" value="{{ entry_lightapply }}" id="button-voucher" data-loading-text="{{ text_loading }}"  class="btn btn-primary" />
+							</span></td>
+						  </tr>
+						{% endif %}
+						{% if key == 'reward' %}
+						  <tr>
+							<td class="input-group light-td"><input type="text" name="reward" value="{{ reward }}" placeholder="{{ entry_lightreward }}" id="input-reward" class="form-control" />
+							<span class="input-group-btn">
+							  <input type="submit" value="{{ entry_lightapply }}" id="button-reward" data-loading-text="{{ text_loading }}"  class="btn btn-primary" />
+							</span></td>
+						  </tr>
+						{% endif %}
+					  {% endfor %}
+				  </table>
+				</div>
+			{% endif %}
+		  </div>
+        </div>
+	  </div></div>
+{% if not updatecart %}
+	  </div>
+	  </div>
+    </div>
+</div>
+{% endif %}
+<script type="text/javascript"><!--
+$('.light-qty .light-minus').click(function () {
+	var $input = $(this).parent().parent().find('#light-qty');
+	var count = parseInt($input.val()) - 1;
+	count = count < 1 ? 1 : count;
+	$input.val(count);
+	$input.change();
+	LightCartUpdate();
+	return false;
+});
+$('.light-qty .light-plus').click(function () {
+	var $input = $(this).parent().parent().find('#light-qty');
+	$input.val(parseInt($input.val()) + 1);
+	$input.change();
+	LightCartUpdate();
+	return false;
+});
+{% if error_close %}
+	localStorage.setItem('error_close', true);
+{% else %}
+	localStorage.setItem('error_close', '');
+{% endif %}
+{% if error_warning %}
+	localStorage.setItem('error_warning', true);
+{% else %}
+	localStorage.setItem('error_warning', '');
+{% endif %}
+$('#button-coupon').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/total/coupon/coupon',
+		type: 'post',
+		data: 'coupon=' + encodeURIComponent($('input[name=\'coupon\']').val()),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-coupon').button('loading');
+		},
+		complete: function() {
+			$('#button-coupon').button('reset');
+		},
+		success: function(json) {
+			$('.alert-dismissible').remove();
+
+			if (json['error']) {
+				$('.breadcrumb').after('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+			} else {
+				LightCartUpdate();
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+});
+$('#button-voucher').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/total/voucher/voucher',
+		type: 'post',
+		data: 'voucher=' + encodeURIComponent($('input[name=\'voucher\']').val()),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-voucher').button('loading');
+		},
+		complete: function() {
+			$('#button-voucher').button('reset');			
+		},
+		success: function(json) {
+			$('.alert-dismissible').remove();
+			
+			if (json['error']) {
+				$('.breadcrumb').after('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				
+				$.ajax({
+					url: 'index.php?route=lightcheckout/cart/voucheremptydelete',
+					type: 'post',
+					data: 'voucher=' + encodeURIComponent($('input[name=\'voucher\']').val()),
+					dataType: 'json',
+					complete: function() {
+						LightCartUpdate();		
+					},
+					success: function(json) {},
+					error: function(xhr, ajaxOptions, thrownError) {	}
+				});
+			} else {
+				LightCartUpdate();
+			}
+			
+			
+			
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+});
+$('#button-reward').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/total/reward/reward',
+		type: 'post',
+		data: 'reward=' + encodeURIComponent($('input[name=\'reward\']').val()),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-reward').button('loading');
+		},
+		complete: function() {
+			$('#button-reward').button('reset');
+		},
+		success: function(json) {
+			$('.alert-dismissible').remove();
+
+			if (json['error']) {
+				$('.breadcrumb').after('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+				LightTop();
+			} else {
+				LightCartUpdate();				
+			}
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			/*alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);*/
+		}
+	});
+});
+// Cart add remove functions
+var cart = {
+	'remove': function(key) {
+		LightCartRemove(key);
+	}
+}
+//--></script>
